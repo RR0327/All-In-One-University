@@ -75,7 +75,7 @@ All-In-One-University/
 │-- README.md
 ```
 
-## Contributors
+## Contributor
 Md Tahsin Azad Shaikat
 
 ## Contributing
