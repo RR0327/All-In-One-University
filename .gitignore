@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+*.env
+
+# Django-related
+*.log
+db.sqlite3
+/media/
+/staticfiles/
+/local_settings.py
+
+# Node.js dependencies
+node_modules/
+
+# Static and compiled assets
+static/
+*.css.map
+*.js.map
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+
+# MacOS and system files
+.DS_Store
+Thumbs.db
+
+# Coverage and testing
+.coverage
+*.cover
+htmlcov/
+
+# Logs and debugging
+logs/
+*.log
+
+# Ignore migrations (optional)
+*/migrations/__pycache__/
+*/migrations/*.pyc
