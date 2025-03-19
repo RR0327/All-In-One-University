@@ -79,7 +79,7 @@ All-In-One-University/
 ```
 
 ## Contributor
-
+Md. Tahsin Azad Shaikat
 
 ### **Contributing**
 Feel free to contribute! Fork the repository, make changes, and submit a **pull request**.
