@@ -5,7 +5,7 @@ _pycache_/
 
 # Virtual Environment
 .venv/
-env/
+venv/
 
 # Database
 *.sqlite3

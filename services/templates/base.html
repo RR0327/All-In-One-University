@@ -47,8 +47,8 @@
               href="{% url 'meal_booking' %}">Book a Meal</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}"
-              href="{% url 'dashboard' %}">Dashboard</a>
+            {% comment %} <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}"
+              href="{% url 'dashboard' %}">Dashboard</a> {% endcomment %}
           </li>
           <li class="nav-item">
             <a class="btn btn-danger ms-2" href="{% url 'logout' %}">Logout</a>

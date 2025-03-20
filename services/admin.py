@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     CafeteriaMenu, 
     BusRoute, 
-    BusSchedule,
+    bus_schedule,
     Faculty, 
     Course, 
     ClassSchedule, 
@@ -20,7 +20,6 @@ class BusScheduleAdmin(admin.ModelAdmin):
 admin.site.register(bus_schedule, BusScheduleAdmin)
 admin.site.register(CafeteriaMenu)
 admin.site.register(BusRoute)
-admin.site.register(BusSchedule)
 admin.site.register(Faculty)
 admin.site.register(Course)
 admin.site.register(ClassSchedule)

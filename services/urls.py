@@ -7,11 +7,9 @@ urlpatterns = [
     path('', views.index, name='index'),
 
     # ✅ Authentication
-    path('accounts/register/', views.register, name='register'),
-    path('accounts/login/', views.user_login_view, name='login'),
-    path('accounts/logout/', views.user_logout_view, name='logout'),
-    path('accounts/', include('django.contrib.auth.urls')),  
-    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('register/', views.register_view, name='register'),
 
     # ✅ Cafeteria & Meals
     path('cafeteria/', views.cafeteria_weekly_view, name='cafeteria_main'),

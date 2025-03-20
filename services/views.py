@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from collections import OrderedDict
 from django.contrib import messages
 from .models import (
-    CafeteriaMenu, BusRoute, BusSchedule, Faculty, Course, ClassSchedule, Club,
+    User, CafeteriaMenu, BusRoute, bus_schedule, Faculty, Course, ClassSchedule, Club,
     Event, CampusBuilding, MealBooking
 )
 from .forms import MealBookingForm, RegistrationForm
@@ -19,40 +19,69 @@ def index(request):
 # ---------------------
 # ✅ Authentication Views (Login, Logout, Register)
 # ---------------------
-def user_login_view(request):
+def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            next_url = request.GET.get('next', '/')
-            return redirect(next_url)
+            return redirect('index')
         else:
-            messages.error(request, 'Invalid username or password.')
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
     return render(request, 'login.html')
 
-def user_logout_view(request):
+def register_view(request):
+    """
+    Handles user registration and automatically generates a Card with a QR code.
+    """
+    if request.method == 'POST':
+        name = request.POST.get('name').strip()
+        email = request.POST.get('email').strip()
+        role = request.POST.get('role')
+        password = request.POST.get('password')
+        id_number = request.POST.get('id_number').strip()
+        level = request.POST.get('level') if role == 'student' else None
+        term = request.POST.get('term') if role == 'student' else None
+        contact_information = request.POST.get('contact_information').strip()
+        
+        if not all([name, email, role, password, id_number, contact_information]):
+            messages.error(request, "All fields are required.")
+            return redirect('register')
+        
+        if role == 'student' and not all([level, term]):
+            messages.error(request, "Level and Term are required for students.")
+            return redirect('register')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "This email is already registered.")
+            return redirect('register')
+
+        if User.objects.filter(id_number=id_number).exists():
+            messages.error(request, "This ID number is already registered.")
+            return redirect('register')
+        
+        try:
+            user = User.objects.create_user(
+                email=email, name=name, role=role,
+                id_number=id_number, level=level, term=term,
+                contact_information=contact_information, password=password
+            )
+            # Card.objects.create(user=user)
+            messages.success(request, "Registration successful! You can now log in.")
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f"Error during registration: {str(e)}")
+            return redirect('register')
+    
+    return render(request, 'register.html')
+
+
+
+
+def user_logout(request):
     logout(request)
     return redirect('login')
-
-# ✅ User Registration View
-def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)  # Auto-login after registration
-            messages.success(request, "Registration successful. Welcome!")
-            return redirect('dashboard')  # Redirect to the dashboard after sign-up
-    else:
-        form = RegistrationForm()
-
-    return render(request, 'register.html', {'form': form})
-
-@login_required
-def dashboard_view(request):
-    return render(request, 'dashboard.html')
 
 # ---------------------
 # ✅ 1) Cafeteria Menus
@@ -87,8 +116,13 @@ def booking_success_view(request):
 # ---------------------
 def bus_schedules_view(request):
     routes = BusRoute.objects.all()
-    schedules = BusSchedule.objects.all()
-    return render(request, 'bus_schedules.html', {'routes': routes, 'schedules': schedules})
+    schedules = bus_schedule.objects.all()
+    context = {
+        'routes': routes,
+        'schedules': schedules
+    }
+    return render(request, 'bus_schedules.html', context)
+
 
 # ---------------------
 # ✅ 3) Class Schedules & Faculty Contacts
