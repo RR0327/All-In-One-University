@@ -1,7 +1,9 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Welcome to Our Website</h2>
+{% load static %}
+{% comment %} <h2>Welcome to Our Website</h2>
 
 {% if user.is_authenticated %}
 <p>Hello, {{ user.username }}!</p>
@@ -10,6 +12,149 @@
 {% else %}
 <a href="{% url 'login' %}">Login</a> |
 <a href="{% url 'register' %}">Register</a>
-{% endif %}
+{% endif %} {% endcomment %}
+<!-- ========== MAIN CONTENT ========== -->
+<main>
+    <!-- ========== HERO SECTION ========== -->
+  <div class="hero" id="hero">
+    <div class="hero-content">
+      <div class="container">
+        <h1 class="display-4 fw-bold">Welcome to CampusMS</h1>
+        <p class="lead">
+          Your all-in-one platform for scheduling, dining, commuting, and campus engagement.
+        </p>
+        <p>NEOFETCH Hackathon Inventious 4.1: Renovate Towards Revolution</p>
+        <a href="{% url 'cafeteria_main' %}" class="btn btn-primary btn-lg">Get Started</a>
+      </div>
+    </div>
+  </div>
+    <!-- Cafeteria Section -->
+    <section class="feature-section" id="cafeteria">
+      <div class="container">
+        <h2 class="text-center mb-4">Cafeteria Menu & Meal Schedules</h2>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/cafe.jpg' %}" alt="Cafeteria" class="img-fluid rounded" />
+          </div>
+          <div class="col-md-6">
+            <h4 class="fw-bold">Real-Time Meal Updates</h4>
+            <p>
+              View daily meal menus with prices and nutrition facts—because informed dining choices matter!
+              Save time by placing a pre-order through our online system.
+            </p>
+            <ul>
+              <li>Daily menu with detailed prices</li>
+              <li>Pre-order meals to skip the line</li>
+            </ul>
+            <a href="{% url 'cafeteria_multi_day' %}" ...>Explore Menu</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-{% endblock %}
+    <!-- Bus Routes Section -->
+    <section class="feature-section bg-light" id="bus-routes">
+      <div class="container">
+        <h2 class="text-center mb-4">University Bus Routes & Schedules</h2>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6 order-md-2">
+            <img src="{% static 'images/bus.png' %}" alt="Bus Routes" class="img-fluid rounded" />
+          </div>
+          <div class="col-md-6 order-md-1">
+            <h4 class="fw-bold">Real-Time Notifications & Tracking</h4>
+            <p>
+              Never miss your bus again! Stay updated on schedule changes, delays, and detours with timely
+              notifications.
+            </p>
+            <ul>
+              <li>Real-time bus location tracking</li>
+              <li>Instant alerts for schedule changes</li>
+            </ul>
+            <a href="{% url 'bus_schedules' %}" class="btn btn-outline-secondary mt-2">Check Routes</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Class Schedules & Faculty Contacts -->
+    
+
+    <!-- Events & Clubs -->
+    <section class="feature-section bg-light" id="events">
+      <div class="container">
+        <h2 class="text-center mb-4">Event & Club Management</h2>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6 order-md-2">
+            <img src="{% static 'images/club.jpeg' %}" alt="Events & Clubs" class="img-fluid rounded" />
+          </div>
+          <div class="col-md-6 order-md-1">
+            <h4 class="fw-bold">Stay Connected & Engaged</h4>
+            <p>
+              Discover upcoming events, club meetings, and extracurricular activities. Sign up, RSVP, and never miss a
+              chance to get involved.
+            </p>
+            <ul>
+              <li>University event calendar with RSVPs</li>
+              <li>Clubs and organizations listing</li>
+              <li><strong>Bonus:</strong> AI-based event recommender</li>
+            </ul>
+            <a href="{% url 'events'%}" class="btn btn-outline-secondary mt-2">Browse Events</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Campus Navigation & AR Map -->
+    <section class="feature-section" id="campus-ar">
+      <div class="container">
+        <h2 class="text-center mb-4">Campus Navigation & AR Map</h2>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/map.png' %}" alt="AR Navigation" class="img-fluid rounded" />
+          </div>
+          <div class="col-md-6">
+            <h4 class="fw-bold">Next-Level Wayfinding</h4>
+            <p>
+              Locate classrooms, libraries, and offices in real time. Turn on AR mode to point your phone at a building
+              and see location details overlaid on screen.
+            </p>
+            <ul>
+              <li>AR wayfinding for quick, on-foot guidance</li>
+              <li>Building details and routes at your fingertips</li>
+            </ul>
+            <a href="{% url 'campus_map'%}" class="btn btn-outline-primary mt-2">Launch AR Map</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  {% if user.is_authenticated %}
+  <section class="feature-section" id="class-schedules">
+    <div class="container">
+      <h2 class="text-center mb-4">Class Schedules & Faculty Contacts</h2>
+      <div class="row g-4 align-items-center">
+        <div class="col-md-6">
+          <img src="{% static 'images/faculty.jpg' %}" alt="Class Schedules" class="img-fluid rounded" />
+        </div>
+        <div class="col-md-6">
+          <h4 class="fw-bold">Personalized Routines & Reminders</h4>
+          <p>
+            Keep track of your academic calendar with automatic reminders for classes, assignment deadlines, and
+            exams.
+          </p>
+          <ul>
+            <li>Customized class routines</li>
+            <li>Integrated faculty directory for easy communication</li>
+            <li>Assignment & exam to-dos with alerts</li>
+          </ul>
+          <a href="{% url 'class_schedules' %}" class="btn btn-outline-primary mt-2">View Schedule</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% else %}
+  
+  {% endif %}
+
+{% endblock content %}

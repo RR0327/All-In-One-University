@@ -1,5 +1,5 @@
-
-
+{% extends "base.html" %}
+{% block content %}
   <h1>Bus Schedule</h1>  
   
   {% if schedules %}  
@@ -16,3 +16,5 @@
   {% else %}  
     <p>No bus schedules available at the moment.</p>  
   {% endif %}  
+
+{% endblock content %}
