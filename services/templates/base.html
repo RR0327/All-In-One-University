@@ -17,7 +17,6 @@
         --neon-glow: 0 0 15px rgba(0, 210, 255, 0.4);
     }
 
-    /* Core Layout */
     body { 
         font-family: 'Inter', sans-serif; 
         background-color: var(--primary-bg); 
@@ -25,111 +24,125 @@
         line-height: 1.6;
     }
 
-    /* Glassmorphism Navbar */
+    /* --- NAVIGATION & HAMBURGER FIX --- */
     .navbar { 
         background: rgba(22, 27, 34, 0.95); 
         border-bottom: 1px solid rgba(0, 210, 255, 0.3); 
         backdrop-filter: blur(12px); 
-        -webkit-backdrop-filter: blur(12px);
         padding: 0.8rem 0;
     }
 
-    /* --- HAMBURGER BUTTON FIX --- */
+    /* Custom Hamburger Icon - Blue & Visible */
     .navbar-toggler {
         border: 1px solid var(--accent-blue) !important;
-        padding: 0.5rem;
-        transition: box-shadow 0.3s ease;
     }
 
-    .navbar-toggler:focus {
-        box-shadow: var(--neon-glow);
-        outline: none;
-    }
-
-    /* Custom Light Blue Hamburger Icon */
     .navbar-toggler-icon {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 210, 255, 1)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E") !important;
     }
 
-    /* --- NAV LINK HOVER FIX --- */
     .nav-link { 
         color: var(--text-main) !important; 
         font-weight: 500; 
-        transition: all 0.3s ease;
         margin: 0 5px;
         position: relative;
-        background: transparent !important; /* Removes the grey background seen in your image */
+        background: transparent !important;
+        transition: color 0.3s ease;
     }
 
-    /* Sleek Underline Effect */
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: 0;
-        left: 0;
+    .nav-link:hover { color: var(--accent-blue) !important; }
+
+    /* --- SYSTEM STATUS PULSE --- */
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        font-size: 0.75rem;
+        color: var(--accent-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-left: 20px;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
         background-color: var(--accent-blue);
-        box-shadow: var(--neon-glow);
-        transition: width 0.3s ease;
+        border-radius: 50%;
+        margin-right: 8px;
+        box-shadow: 0 0 0 rgba(0, 210, 255, 0.4);
+        animation: pulse 2s infinite;
     }
 
-    .nav-link:hover::after {
-        width: 100%;
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
     }
 
-    .nav-link:hover { 
-        color: var(--accent-blue) !important; 
-        text-shadow: var(--neon-glow);
-    }
-
-    /* --- BUTTONS & TABLES --- */
+    /* --- BUTTONS --- */
     .btn-neon { 
         border: 1px solid var(--accent-blue); 
         color: var(--accent-blue) !important; 
         background: transparent;
         border-radius: 8px;
         padding: 8px 20px;
-        font-weight: 600;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.4s ease;
     }
 
     .btn-neon:hover { 
         background: var(--accent-blue); 
         color: #000 !important; 
         box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
-        transform: translateY(-2px);
-    }
-
-    .table thead th {
-        background-color: rgba(0, 210, 255, 0.1);
-        color: var(--accent-blue);
-        border-bottom: 2px solid var(--accent-blue);
     }
 </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-Skyblue" href="{% url 'index' %}">Campus<span style="color: var(--accent-blue);">MS</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'cafeteria_main' %}">Cafeteria</a></li>
-                        <li class="nav-item"><a class="btn btn-neon ms-lg-3" href="{% url 'logout' %}">Logout</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                        <li class="nav-item"><a class="btn btn-neon ms-lg-3" href="{% url 'register' %}">Sign Up</a></li>
-                    {% endif %}
-                </ul>
+    <div class="container">
+        <a class="navbar-brand fw-bold text-Skyblue" href="{% url 'index' %}">
+            Campus<span style="color: var(--accent-blue);">MS</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="status-indicator d-none d-lg-flex ms-3 align-items-center">
+                <div class="pulse-dot"></div>
+                <div class="d-flex flex-column" style="line-height: 1;">
+                    <span class="small fw-bold">System Online</span>
+                    <span id="sync-time" class="text-muted" style="font-size: 0.65rem; letter-spacing: 0.5px;">Last Sync: Just now</span>
+                </div>
             </div>
+
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cafeteria_main' %}">Cafeteria</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-neon ms-lg-3" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-neon ms-lg-3" href="{% url 'register' %}">Sign Up</a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="container mt-4 mb-5">
         {% if messages %}
@@ -145,5 +158,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    function updateSyncTime() {
+        const now = new Date();
+        const timeString = now.getHours().toString().padStart(2, '0') + ":" + 
+                           now.getMinutes().toString().padStart(2, '0') + ":" + 
+                           now.getSeconds().toString().padStart(2, '0');
+        document.getElementById('sync-time').innerText = "Last Sync: " + timeString;
+    }
+
+    // Update every minute, or just on page load
+    window.onload = updateSyncTime;
+</script>
+
 </body>
 </html>
