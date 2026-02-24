@@ -201,3 +201,9 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     tx_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     description = models.CharField(max_length=255)
+
+
+@receiver(post_save, sender=User)
+def create_user_wallet(sender, instance, created, **kwargs):
+    if created:
+        StudentWallet.objects.create(user=instance, balance=500.00)

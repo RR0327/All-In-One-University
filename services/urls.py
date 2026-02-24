@@ -25,4 +25,9 @@ urlpatterns = [
     # --- Campus Navigation ---
     path("campus-map/", views.campus_map_view, name="campus_map"),
     path("api/buildings/", views.buildings_json, name="buildings_json"),
+    path(
+        "download-meal-summary/",
+        views.download_meal_summary,
+        name="download_meal_summary",
+    ),
 ]

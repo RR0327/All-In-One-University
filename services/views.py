@@ -8,6 +8,8 @@ from collections import OrderedDict
 import datetime
 
 from .models import (
+    StudentWallet,
+    Transaction,
     CafeteriaMenu,
     BusRoute,
     BusSchedule,
@@ -31,9 +33,18 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 import uuid
-from sslcommerz_lib import SSLCommerz
-from .utils import generate_meal_pdf
 
+# from sslcommerz_lib.sslcommerz import sslcommerz as SSLCommerz
+from .utils import generate_meal_pdf  # # Ensure you created the utility file
+
+try:
+    from sslcommerz_lib.sslcommerz import SSLCommerz
+except ImportError:
+    try:
+        from sslcommerz_lib import SSLCommerz
+    except ImportError:
+        SSLCommerz = None
+        print("Warning: SSLCommerz library could not be loaded.")
 
 # ==========================================
 # 1. HOME & AUTHENTICATION
@@ -318,7 +329,7 @@ def initiate_payment(request):
         {
             "store_id": settings.SSLCOMMERZ_STORE_ID,
             "store_pass": settings.SSLCOMMERZ_STORE_PASS,
-            "issandbox": True,  # Set to False for production
+            "issandbox": settings.SSLCOMMERZ_SANDBOX,
         }
     )
 
@@ -332,6 +343,9 @@ def initiate_payment(request):
         "success_url": "http://127.0.0.1:8000/payment-success/",
         "fail_url": "http://127.0.0.1:8000/payment-fail/",
         "cancel_url": "http://127.0.0.1:8000/payment-cancel/",
+        # "success_url": request.build_absolute_uri("/payment-success/"),
+        # "fail_url": request.build_absolute_uri("/payment-fail/"),
+        # "cancel_url": request.build_absolute_uri("/payment-cancel/"),
         "emi_option": 0,
         "cus_name": request.user.username,
         "cus_email": request.user.email,
@@ -351,8 +365,12 @@ def initiate_payment(request):
 
 @login_required
 def download_meal_summary(request):
-    """View to trigger the download of the monthly meal report."""
-    wallet = request.user.studentwallet
+    """View with safety check for missing wallets."""
+    # Use get_or_create so the app never crashes if a wallet is missing
+    wallet, created = StudentWallet.objects.get_or_create(
+        user=request.user, defaults={"balance": 0.00}
+    )
+
     # Filter for the current month's debits
     transactions = wallet.transactions.filter(tx_type="Debit").order_by("-timestamp")
 

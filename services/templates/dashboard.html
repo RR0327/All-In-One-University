@@ -70,7 +70,7 @@
                     <div class="flex-grow-1">
                         <h6 class="fw-bold" style="color: #00ff88;"><i class="bi bi-wallet2 me-2"></i>Campus Wallet</h6>
                         <div class="h2 fw-bold text-white mb-0">৳{{ user.studentwallet.balance }}</div>
-                        <p class="text-blur small mb-0">Status: Fully Encrypted & Secure</p>
+                        <p class="text-white small mb-0">Status: Fully Encrypted & Secure</p>
                     </div>
                     <div class="ms-3">
                         <button class="btn btn-outline-success px-4">Add Credit</button>
@@ -80,26 +80,28 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue); box-shadow: var(--neon-glow);">
-                <div class="card-body d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
-                        <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
-                        <p class="text-blur small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
-                    </div>
-                    <div class="ms-3 text-end" style="min-width: 150px;">
-                        <div class="progress bg-dark mb-2" style="height: 8px;">
-                            <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%"></div>
-                        </div>
-                        <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm w-100">Analytics</a>
-                    </div>
+    <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue); box-shadow: var(--neon-glow);">
+        <div class="card-body d-flex align-items-center">
+            <div class="flex-grow-1">
+                <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
+                <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
+                <p class="text-white small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
+            </div>
+            <div class="ms-3 text-end" style="min-width: 160px;">
+                <div class="progress bg-dark mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%"></div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm py-1">Analytics Details</a>
+                    
+                    <a href="{% url 'download_meal_summary' %}" class="btn btn-sm btn-outline-light py-1" style="font-size: 0.75rem;">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Download Report
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="mt-2">
-    <a href="{% url 'download_meal_summary' %}" class="btn btn-sm btn-outline-light w-100">
-        <i class="bi bi-file-earmark-pdf me-1"></i>Download Report
-    </a>
+    </div>
 </div>
     </div>
 </div>

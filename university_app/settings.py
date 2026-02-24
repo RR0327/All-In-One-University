@@ -137,3 +137,9 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# SSLCommerz Configuration from .env
+
+SSLCOMMERZ_STORE_ID = os.environ.get("SSLCOMMERZ_STORE_ID")
+SSLCOMMERZ_STORE_PASS = os.environ.get("SSLCOMMERZ_STORE_PASS")
+SSLCOMMERZ_SANDBOX = os.environ.get("SSLCOMMERZ_SANDBOX") == "True"
