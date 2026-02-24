@@ -76,12 +76,24 @@ def dashboard_view(request):
 
 
 def cafeteria_weekly_view(request):
-    menu_items = CafeteriaMenu.objects.all().order_by("day", "meal_type")
+    """Groups and sorts menus chronologically: Breakfast -> Lunch -> Snacks -> Dinner."""
+    menu_items = CafeteriaMenu.objects.all().order_by("day")
+
+    # Define the professional chronological order
+    meal_order = {"Breakfast": 1, "Lunch": 2, "Snacks": 3, "Dinner": 4}
+
     day_groups = OrderedDict()
-    for item in menu_items:
+
+    # Sort the items using our meal_order mapping
+    sorted_menu = sorted(
+        menu_items, key=lambda x: (x.day, meal_order.get(x.meal_type, 99))
+    )
+
+    for item in sorted_menu:
         if item.day not in day_groups:
             day_groups[item.day] = []
         day_groups[item.day].append(item)
+
     return render(request, "cafeteria_multi_day.html", {"day_groups": day_groups})
 
 

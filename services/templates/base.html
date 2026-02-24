@@ -9,19 +9,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        :root {
-            --primary-bg: #0b0e14;
-            --card-bg: #161b22;
-            --accent-blue: #00d2ff;
-            --text-main: #8ec6f7;
-        }
-        body { font-family: 'Inter', sans-serif; background-color: var(--primary-bg); color: var(--text-main); }
-        .navbar { background: rgba(22, 27, 34, 0.95); border-bottom: 1px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        .nav-link { color: var(--text-main) !important; font-weight: 500; transition: 0.3s; }
-        .nav-link:hover { color: var(--accent-blue) !important; }
-        .btn-neon { border: 1px solid var(--accent-blue); color: var(--accent-blue); transition: 0.5s; }
-        .btn-neon:hover { background: var(--accent-blue); color: #000; box-shadow: 0 0 15px var(--accent-blue); }
-    </style>
+    :root {
+        --primary-bg: #0b0e14;
+        --card-bg: #161b22;
+        --accent-blue: #00d2ff;
+        --text-main: #8ec6f7;
+        --neon-glow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Core Layout */
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--primary-bg); 
+        color: var(--text-main);
+        line-height: 1.6;
+    }
+
+    /* Glassmorphism Navbar */
+    .navbar { 
+        background: rgba(22, 27, 34, 0.95); 
+        border-bottom: 1px solid rgba(0, 210, 255, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px);
+        padding: 0.8rem 0;
+    }
+
+    /* --- HAMBURGER BUTTON FIX --- */
+    .navbar-toggler {
+        border: 1px solid var(--accent-blue) !important;
+        padding: 0.5rem;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: var(--neon-glow);
+        outline: none;
+    }
+
+    /* Custom Light Blue Hamburger Icon */
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 210, 255, 1)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E") !important;
+    }
+
+    /* --- NAV LINK HOVER FIX --- */
+    .nav-link { 
+        color: var(--text-main) !important; 
+        font-weight: 500; 
+        transition: all 0.3s ease;
+        margin: 0 5px;
+        position: relative;
+        background: transparent !important; /* Removes the grey background seen in your image */
+    }
+
+    /* Sleek Underline Effect */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--accent-blue);
+        box-shadow: var(--neon-glow);
+        transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .nav-link:hover { 
+        color: var(--accent-blue) !important; 
+        text-shadow: var(--neon-glow);
+    }
+
+    /* --- BUTTONS & TABLES --- */
+    .btn-neon { 
+        border: 1px solid var(--accent-blue); 
+        color: var(--accent-blue) !important; 
+        background: transparent;
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-neon:hover { 
+        background: var(--accent-blue); 
+        color: #000 !important; 
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .table thead th {
+        background-color: rgba(0, 210, 255, 0.1);
+        color: var(--accent-blue);
+        border-bottom: 2px solid var(--accent-blue);
+    }
+</style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg sticky-top">

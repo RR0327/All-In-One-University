@@ -21,7 +21,7 @@
                                         {{ event.event_date|date:"M d, Y" }} 
                                     </span>
                                     {% if event.club %}
-                                    <p class="small text-muted mt-2">Hosted by {{ event.club.club_name }} </p>
+                                    <p class="small text-blur mt-2">Hosted by {{ event.club.club_name }} </p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 {% empty %}
-                <p class="text-muted">No events found.</p>
+                <p class="text-blur">No events found.</p>
                 {% endfor %}
             </div>
         </div>
@@ -39,7 +39,7 @@
             {% for c in clubs %}
             <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.05); border-left: 3px solid #ffc107;">
                 <h6 class="text-white fw-bold mb-1">{{ c.club_name }} </h6>
-                <p class="small text-muted mb-0">{{ c.description }} </p>
+                <p class="small text-blur mb-0">{{ c.description }} </p>
             </div>
             {% endfor %}
         </div>

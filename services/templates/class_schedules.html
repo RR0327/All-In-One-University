@@ -26,7 +26,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="3" class="text-center py-4 text-muted">No classes scheduled.</td>
+                            <td colspan="3" class="text-center py-4 text-blur">No classes scheduled.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -41,7 +41,7 @@
                 <div class="list-group-item bg-dark border-secondary mb-2 rounded">
                     <h6 class="mb-1 text-white fw-bold">{{ f.name }} </h6>
                     <p class="mb-1 small text-info">{{ f.department }} </p>
-                    <a href="mailto:{{ f.email }}" class="small text-muted text-decoration-none">
+                    <a href="mailto:{{ f.email }}" class="small text-blur text-decoration-none">
                         <i class="bi bi-envelope me-1"></i> {{ f.email }} 
                     </a>
                 </div>
