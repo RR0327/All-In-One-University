@@ -1,14 +1,35 @@
-
+{% extends "base.html" %}
 {% block content %}
-<h2>Campus Map</h2>
-<p>This is where you'd integrate a map or AR feature. For now, we list buildings.</p>
-<ul>
-    {% for b in buildings %}
-    <li>{{ b.building_name }} (Lat: {{ b.latitude }}, Lon: {{ b.longitude }})</li>
-    {% endfor %}
-</ul>
-<!-- 
-    Potentially integrate a JavaScript map library here (like Leaflet.js or 
-    Google Maps) to visualize building locations on a map.
-  -->
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-white">Campus <span class="text-info">Navigation</span></h2>
+            <p class="text-muted">Locate buildings, offices, and landmarks across the university.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-9">
+            <div class="rounded shadow-lg border border-secondary overflow-hidden" style="height: 500px; background: #0d1117; position: relative;">
+                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                    <i class="bi bi-geo-alt-fill text-danger display-1 mb-3"></i>
+                    <h5 class="text-muted">Interactive Map Loading...</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <h5 class="text-white mb-3">Building Directory</h5>
+            <div class="list-group list-group-flush rounded border border-secondary shadow">
+                {% for b in buildings %}
+                <button type="button" class="list-group-item list-group-item-action bg-dark text-white border-secondary small">
+                    <i class="bi bi-building me-2"></i> {{ b.building_name }}
+                </button>
+                {% empty %}
+                <p class="text-muted small p-3">No building data found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

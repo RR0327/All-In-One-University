@@ -1,6 +1,12 @@
+{% extends "base.html" %}
 {% block content %}
-<div class="container mt-5">
-    <h3 class="text-success">Meal Booked Successfully!</h3>
-    <p>Your meal booking has been recorded.</p>
+<div class="container text-center py-5">
+    <div class="display-1 text-success mb-4"><i class="bi bi-check-circle-fill"></i></div>
+    <h2 class="fw-bold text-white">Booking <span class="text-success">Confirmed!</span></h2>
+    <p class="text-secondary lead mb-5">Your meal reservation has been successfully recorded in the system.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-light px-4">Go to Dashboard</a>
+        <a href="{% url 'cafeteria_main' %}" class="btn btn-info px-4 text-dark fw-bold">View My Schedule</a>
+    </div>
 </div>
 {% endblock %}

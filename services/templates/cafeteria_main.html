@@ -1,38 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
 {% block content %}
-<h1 class="text-center mb-4">Weekly Cafeteria Menu</h1>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-white mb-3">Smart <span style="color: var(--accent-blue);">Dining Hub</span></h1>
+        <p class="text-secondary lead">Manage your daily meals, view menus, and pre-book to skip the line.</p>
+    </div>
 
-<!-- Loop over each day in day_groups -->
-{% for this_day, items in day_groups.items %}
-<!-- Day Name, centered -->
-<h2 class="mt-5 text-center">
-    {{ this_day|date:"l" }}
-</h2>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-10 mb-4">
+            <div class="card bg-dark border-secondary shadow-lg overflow-hidden" style="border-left: 5px solid var(--accent-blue) !important;">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-4">
+                        <img src="{% static 'images/cafe.jpg' %}" class="img-fluid rounded-start" alt="Cafeteria" style="height: 100%; object-fit: cover; opacity: 0.8;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-4">
+                            <h4 class="card-title text-white fw-bold">Weekly Menu Overview</h4>
+                            <p class="card-text text-muted">View the complete meal schedule for the current week, including prices and nutritional info.</p>
+                            <a href="{% url 'cafeteria_multi_day' %}" class="btn btn-info fw-bold px-4">View Weekly Schedule</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<!-- Table container to control width and centering -->
-<div class="table-responsive" style="max-width: 800px; margin: 0 auto;">
-    <table class="table table-bordered table-striped mt-3">
-        <thead>
-            <tr>
-                <th style="width: 20%;">Meal Type</th>
-                <th style="width: 60%;">Meal Item</th>
-                <th style="width: 20%;" class="text-end">Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <!-- Meal Type (Breakfast, Lunch, etc.) -->
-                <td>{{ item.meal_type }}</td>
+        <div class="col-12">
+            <h5 class="text-white fw-bold mb-4 text-center">Browse by <span class="text-info">Meal Type</span></h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a href="{% url 'cafeteria_breakfast' %}" class="card bg-dark border-secondary text-decoration-none card-hover text-center p-3">
+                        <i class="bi bi-sun text-warning fs-1 mb-2"></i>
+                        <h6 class="text-white mb-0">Breakfast</h6>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cafeteria_lunch' %}" class="card bg-dark border-secondary text-decoration-none card-hover text-center p-3">
+                        <i class="bi bi-brightness-high text-info fs-1 mb-2"></i>
+                        <h6 class="text-white mb-0">Lunch</h6>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cafeteria_snacks' %}" class="card bg-dark border-secondary text-decoration-none card-hover text-center p-3">
+                        <i class="bi bi-cup-hot text-danger fs-1 mb-2"></i>
+                        <h6 class="text-white mb-0">Snacks</h6>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'cafeteria_dinner' %}" class="card bg-dark border-secondary text-decoration-none card-hover text-center p-3">
+                        <i class="bi bi-moon-stars text-primary fs-1 mb-2"></i>
+                        <h6 class="text-white mb-0">Dinner</h6>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-                <!-- Meal Item (Use item.description or item.meal_name) -->
-                <td>{{ item.description }}</td>
-
-                <!-- Price (Right-aligned) -->
-                <td class="text-end">{{ item.price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="col-md-8 mt-5 text-center">
+            <div class="p-4 rounded border border-secondary" style="background: rgba(255,255,255,0.03);">
+                <h5 class="text-white">Ready to reserve?</h5>
+                <p class="small text-muted mb-4">Ensure your meal is ready when you arrive by pre-booking through our secure system.</p>
+                <a href="{% url 'meal_booking' %}" class="btn btn-neon btn-lg px-5">Book a Meal Now</a>
+            </div>
+        </div>
+    </div>
 </div>
-{% endfor %}
 {% endblock %}

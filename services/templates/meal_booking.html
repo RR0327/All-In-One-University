@@ -1,54 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0" style="background: var(--card-bg); border-top: 5px solid var(--accent-blue) !important;">
+                <div class="card-body p-5">
+                    <h3 class="text-center text-white mb-4">Reserve Your <span class="text-info">Meals</span></h3>
+                    
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">From Date</label>
+                            {{ form.date_from }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">To Date</label>
+                            {{ form.date_to }}
+                        </div>
 
-<div class="container mt-5" style="max-width: 600px;">
-    <h2 class="text-center text-danger mb-4">
-        Your Meal Booking
-        <!-- Example: dynamic ID if you want ->  -->
-        <!-- e.g. "Booking ID: 61" if you had logic or an existing booking -->
-    </h2>
+                        <div class="bg-black bg-opacity-25 p-4 rounded mb-4">
+                            <p class="small text-muted mb-3 border-bottom pb-2">Select Meals to Include:</p>
+                            <div class="form-check mb-2">
+                                {{ form.breakfast }}
+                                <label class="form-check-label text-white ms-2">Breakfast (Sehri)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                {{ form.lunch }}
+                                <label class="form-check-label text-white ms-2">Lunch (Iftar)</label>
+                            </div>
+                            <div class="form-check">
+                                {{ form.dinner }}
+                                <label class="form-check-label text-white ms-2">Dinner</label>
+                            </div>
+                        </div>
 
-    <form method="POST" novalidate>
-        {% csrf_token %}
-        <!-- Display form errors if any -->
-        {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-            {{ form.non_field_errors }}
-        </div>
-        {% endif %}
+                        <div class="alert alert-dark border-secondary small text-muted">
+                            <i class="bi bi-info-circle me-2"></i>Note: Bookings for tomorrow must be completed by 02:30 PM today.
+                        </div>
 
-        <div class="mb-3">
-            <label for="id_date_from" class="form-label">Select Date From:</label>
-            {{ form.date_from|add_class:"form-control" }}
-        </div>
-
-        <div class="mb-3">
-            <label for="id_date_to" class="form-label">Select Date To:</label>
-            {{ form.date_to|add_class:"form-control" }}
-        </div>
-
-        <div class="mb-3">
-            <!-- If you want custom labels: -->
-            <div class="form-check">
-                {{ form.breakfast }}
-                <label class="form-check-label">Breakfast (Sehri)</label>
+                        <button type="submit" class="btn btn-info w-100 fw-bold py-2 mt-3">Confirm Booking</button>
+                    </form>
+                </div>
             </div>
-            <div class="form-check">
-                {{ form.lunch }}
-                <label class="form-check-label">Lunch (Iftar)</label>
-            </div>
-            <div class="form-check">
-                {{ form.dinner }}
-                <label class="form-check-label">Dinner</label>
-            </div>
         </div>
-
-        <p class="text-muted">
-            Last time for booking tomorrow's meal is 02:30 PM
-        </p>
-
-        <button type="submit" class="btn btn-success">Book Meal</button>
-    </form>
+    </div>
 </div>
-
 {% endblock %}

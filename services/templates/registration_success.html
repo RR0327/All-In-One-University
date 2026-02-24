@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center py-5 mt-5">
+    <div class="mb-4">
+        <i class="bi bi-person-check-fill text-info" style="font-size: 4rem;"></i>
+    </div>
+    <h1 class="fw-bold text-white">Welcome to the <span class="text-info">Community!</span></h1>
+    <p class="lead text-secondary mb-4">Your account has been successfully created. You can now access all university services.</p>
+    <a href="{% url 'login' %}" class="btn btn-info btn-lg px-5 fw-bold text-dark">Login to Dashboard</a>
+</div>
+{% endblock %}

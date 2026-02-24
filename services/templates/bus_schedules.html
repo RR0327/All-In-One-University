@@ -1,18 +1,38 @@
-
+{% extends "base.html" %}
 {% block content %}
-<h2>Bus Routes & Schedules</h2>
-<h3>Routes</h3>
-<ul>
-    {% for route in routes %}
-    <li>{{ route.route_name }}: {{ route.start_location }} to {{ route.end_location }}</li>
-    {% endfor %}
-</ul>
-<h3>Schedules</h3>
-<ul>
-    {% for schedule in schedules %}
-    <li>{{ schedule.route.route_name }}:
-        Departs at {{ schedule.departure_time }},
-        Arrives at {{ schedule.arrival_time }}</li>
-    {% endfor %}
-</ul>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white">Bus Routes <span class="text-warning">& Schedules</span></h2>
+        <span class="badge bg-warning text-dark p-2">Live Updates</span>
+    </div>
+
+    <div class="table-responsive shadow-lg rounded">
+        <table class="table table-dark table-hover mb-0" style="background: var(--card-bg);">
+            <thead class="text-uppercase small fw-bold" style="border-bottom: 2px solid var(--accent-blue);">
+                <tr>
+                    <th class="py-3 px-4">Route Name</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr>
+                    <td class="py-3 px-4 fw-bold text-info">{{ schedule.route.route_name }}</td>
+                    <td>{{ schedule.route.start_location }}</td>
+                    <td>{{ schedule.route.end_location }}</td>
+                    <td class="text-success fw-bold">{{ schedule.departure_time|time:"H:i" }}</td>
+                    <td>{{ schedule.arrival_time|time:"H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">No bus schedules available for today.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

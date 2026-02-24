@@ -1,15 +1,25 @@
+{% extends "base.html" %}
 {% block content %}
-<h2>Lunch Menu for {{ today }}</h2>
-{% if menus %}
-<ul>
-    {% for item in menus %}
-    <li>
-        <strong>{{ item.meal_name }}</strong> - {{ item.description }}
-        [Price: {{ item.price }}]
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No lunch items found for today.</p>
-{% endif %}
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-white">Midday <span class="text-info">Lunch</span></h2>
+        <p class="text-muted">Available from 12:30 PM - 03:30 PM</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        {% for item in menus %}
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary h-100 shadow-lg card-hover">
+                <div class="card-body p-4 text-center">
+                    <h5 class="text-white fw-bold mb-3">{{ item.description|truncatechars:30 }}</h5>
+                    <p class="text-success fs-4 fw-bold mb-4">{{ item.price }} ৳</p>
+                    <a href="{% url 'meal_booking' %}" class="btn btn-outline-info w-100">Reserve Lunch</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted py-5">No lunch items listed for today.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

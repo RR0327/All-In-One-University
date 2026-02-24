@@ -1,40 +1,39 @@
+{% extends "base.html" %}
 {% block content %}
-<h1 class="text-center mb-4">Weekly Cafeteria Menu</h1>
-<a href="{% url 'meal_booking' %}" class="btn btn-outline-primary">
-    Book Your Meals
-</a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white">Weekly <span style="color: var(--accent-blue);">Cafeteria Menu</span></h2>
+        <a href="{% url 'meal_booking' %}" class="btn btn-neon">Book Your Meals</a>
+    </div>
 
-
-<!-- Loop over each day in day_groups -->
-{% for this_day, items in day_groups.items %}
-<!-- Show Day Name in Large Text (e.g., "Saturday") -->
-<h2 class="mt-5 text-center">
-    {{ this_day|date:"l" }} <!-- "l" filter shows full weekday name -->
-</h2>
-
-<!-- Table for that day's items -->
-<table class="table table-striped table-bordered mt-3">
-    <thead class="thead-light">
-        <tr>
-            <th>Meal Type</th>
-            <th>Meal Item</th>
-            <th class="text-end">Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in items %}
-        <tr>
-            <!-- Meal Type (e.g. Breakfast, Lunch, etc.) -->
-            <td>{{ item.meal_type }}</td>
-
-            <!-- Meal Item (description or meal_name) -->
-            <td>{{ item.description }}</td>
-
-            <!-- Price -->
-            <td class="text-end">{{ item.price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endfor %}
+    {% for this_day, items in day_groups.items %}
+    <div class="mb-5">
+        <h4 class="text-info border-bottom pb-2 mb-3">{{ this_day|date:"l, F j" }}</h4>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover rounded overflow-hidden">
+                <thead class="table-primary text-dark">
+                    <tr>
+                        <th style="width: 20%;">Meal Type</th>
+                        <th style="width: 60%;">Description</th>
+                        <th style="width: 20%;" class="text-end">Price (BDT)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="fw-bold">{{ item.meal_type }}</td>
+                        <td class="text-secondary">{{ item.description }}</td>
+                        <td class="text-end text-success fw-bold">{{ item.price }} ৳</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5">
+        <p class="text-muted">No menu items scheduled for this week.</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

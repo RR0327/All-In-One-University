@@ -1,15 +1,20 @@
+{% extends "base.html" %}
 {% block content %}
-<h2>Snacks Menu for {{ today }}</h2>
-{% if menus %}
-<ul>
-    {% for item in menus %}
-    <li>
-        <strong>{{ item.meal_name }}</strong> - {{ item.description }}
-        [Price: {{ item.price }}]
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No snacks found for today.</p>
-{% endif %}
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-white">Evening <span class="text-danger">Snacks</span></h2>
+        <p class="text-muted">Freshly prepared from 04:30 PM - 06:30 PM</p>
+    </div>
+
+    <div class="row g-4">
+        {% for item in menus %}
+        <div class="col-md-4">
+            <div class="p-3 rounded border border-secondary bg-dark text-center">
+                <h6 class="text-white fw-bold">{{ item.description }}</h6>
+                <p class="text-info mb-0">{{ item.price }} ৳</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

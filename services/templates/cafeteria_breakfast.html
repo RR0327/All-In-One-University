@@ -1,15 +1,38 @@
+{% extends "base.html" %}
 {% block content %}
-<h2>Breakfast Menu for {{ today }}</h2>
-{% if menus %}
-<ul>
-    {% for item in menus %}
-    <li>
-        <strong>{{ item.meal_name }}</strong> - {{ item.description }}
-        [Price: {{ item.price }}]
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No breakfast items found for today.</p>
-{% endif %}
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-white">Morning <span class="text-info">Breakfast</span></h2>
+        <p class="text-muted">Available from 07:00 AM - 10:30 AM</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        {% for item in menus %}
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary h-100 shadow-lg card-hover">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title text-white fw-bold mb-0">{{ item.meal_name|default:"Daily Special" }}</h5>
+                        <span class="badge bg-info text-dark">{{ item.price }} ৳</span>
+                    </div>
+                    <p class="card-text text-secondary small">{{ item.description }}</p>
+                    <div class="mt-4 border-top border-secondary pt-3">
+                        <a href="{% url 'meal_booking' %}" class="btn btn-sm btn-neon w-100">Pre-order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted italic">No breakfast items found for today.</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{% url 'cafeteria_main' %}" class="text-info text-decoration-none small">
+            <i class="bi bi-arrow-left me-1"></i> Back to Weekly Menu
+        </a>
+    </div>
+</div>
 {% endblock %}

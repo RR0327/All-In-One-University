@@ -1,26 +1,48 @@
-
+{% extends "base.html" %}
 {% block content %}
-<h2>University Events</h2>
-<ul>
-    {% for event in events %}
-    <li>
-        <strong>{{ event.event_name }}</strong>
-        on {{ event.event_date }}
-        {% if event.club %}
-        (Hosted by {{ event.club.club_name }})
-        {% endif %}
-        <br>
-        {{ event.description }}
-    </li>
-    {% endfor %}
-</ul>
+<div class="container py-4">
+    <h2 class="fw-bold text-white mb-5">Campus <span style="color: var(--accent-blue);">Engagement</span></h2>
 
-<h2>Clubs</h2>
-<ul>
-    {% for c in clubs %}
-    <li>
-        <strong>{{ c.club_name }}</strong> - {{ c.description }}
-    </li>
-    {% endfor %}
-</ul>
+    <div class="row">
+        <div class="col-md-8">
+            <h4 class="text-info mb-4"><i class="bi bi-calendar-event me-2"></i>Upcoming Events</h4>
+            <div class="row g-3">
+                {% for event in events %}
+                <div class="col-12">
+                    <div class="card bg-dark border-secondary card-hover">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title text-white fw-bold">{{ event.event_name }} </h5>
+                                    <p class="card-text text-secondary small">{{ event.description|truncatewords:20 }} </p>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-info text-dark px-3 py-2">
+                                        {{ event.event_date|date:"M d, Y" }} 
+                                    </span>
+                                    {% if event.club %}
+                                    <p class="small text-muted mt-2">Hosted by {{ event.club.club_name }} </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No events found.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h4 class="text-warning mb-4"><i class="bi bi-people me-2"></i>Clubs & Societies</h4>
+            {% for c in clubs %}
+            <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.05); border-left: 3px solid #ffc107;">
+                <h6 class="text-white fw-bold mb-1">{{ c.club_name }} </h6>
+                <p class="small text-muted mb-0">{{ c.description }} </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
