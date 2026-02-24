@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white">Transaction <span class="text-info">History</span></h2>
+        <div class="h4 fw-bold text-success">Balance: ৳{{ wallet.balance }}</div>
+    </div>
+
+    <div class="card bg-dark border-secondary">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead class="text-info border-bottom">
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td class="small">{{ tx.timestamp|date:"d M, Y h:i A" }}</td>
+                        <td>{{ tx.description }}</td>
+                        <td>
+                            <span class="badge {% if tx.tx_type == 'Credit' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ tx.tx_type }}
+                            </span>
+                        </td>
+                        <td class="fw-bold {% if tx.tx_type == 'Credit' %}text-success{% else %}text-danger{% endif %}">
+                            {% if tx.tx_type == 'Debit' %}-{% endif %}৳{{ tx.amount }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,42 +1,154 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row pt-4">
-    <div class="col-12 mb-4">
-        <h2 class="fw-bold">Welcome back, <span style="color: var(--accent-blue);">{{ user.username }}</span></h2>
-        <p class="text-blur">Manage your university services and schedules in one place.</p>
+<div class="container-fluid pt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-white mb-0">Welcome back, <span style="color: var(--accent-blue);">{{ user.username }}</span></h2>
+            <p class="text-secondary">Your central hub for university services and schedules.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="notice-ticker-container shadow-sm">
+                <div class="ticker-label"><i class="bi bi-broadcast me-2"></i>LATEST NOTICES</div>
+                <div class="ticker-content">
+                    <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+                        {% for notice in notices %}
+                            <span class="ticker-item">
+                                <i class="bi bi-megaphone-fill text-warning"></i> 
+                                <strong>{{ notice.club.club_name }}:</strong> {{ notice.event_name }} ({{ notice.event_date|date:"M d" }})
+                            </span>
+                        {% empty %}
+                            <span class="ticker-item">System Online: All academic and transit services are operational.</span>
+                        {% endfor %}
+                    </marquee>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid var(--accent-blue);">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold text-white"><i class="bi bi-egg-fried me-2 text-info"></i>Cafeteria</h5>
+                    <p class="card-text text-secondary small">Daily menus and meal subscription management.</p>
+                    <div class="mt-auto pt-3">
+                        <a href="{% url 'cafeteria_main' %}" class="btn btn-sm btn-outline-info">View Menu</a>
+                        <a href="{% url 'meal_booking' %}" class="btn btn-sm btn-info ms-1">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid #f9d423;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold text-white"><i class="bi bi-bus-front me-2 text-warning"></i>Transport</h5>
+                    <p class="card-text text-secondary small">Real-time bus tracking and schedule updates.</p>
+                    <a href="{% url 'bus_schedules' %}" class="btn btn-sm btn-outline-warning mt-auto">Check Routes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid #ff4b2b;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold text-white"><i class="bi bi-calendar3 me-2 text-danger"></i>Academics</h5>
+                    <p class="card-text text-secondary small">Class routines and personalized academic calendar.</p>
+                    <a href="{% url 'class_schedules' %}" class="btn btn-sm btn-outline-danger mt-auto">My Schedule</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100" style="background: var(--card-bg); border: none; border-left: 4px solid #00d2ff;">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold text-white">Cafeteria Services</h5>
-                    <p class="card-text text-secondary">Check today's menu or book your next meal.</p>
-                    <a href="{% url 'cafeteria_main' %}" class="btn btn-sm btn-outline-info">View Menu</a>
-                    <a href="{% url 'meal_booking' %}" class="btn btn-sm btn-info ms-2">Book Now</a>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid #00ff88; border-top: 4px solid #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold" style="color: #00ff88;"><i class="bi bi-wallet2 me-2"></i>Campus Wallet</h6>
+                        <div class="h2 fw-bold text-white mb-0">৳{{ user.studentwallet.balance }}</div>
+                        <p class="text-blur small mb-0">Status: Fully Encrypted & Secure</p>
+                    </div>
+                    <div class="ms-3">
+                        <button class="btn btn-outline-success px-4">Add Credit</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100" style="background: var(--card-bg); border: none; border-left: 4px solid #f9d423;">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold text-white">Transport Routes</h5>
-                    <p class="card-text text-secondary">Track bus timings and real-time route changes.</p>
-                    <a href="{% url 'bus_schedules' %}" class="btn btn-sm btn-outline-warning">Check Schedules</a>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue); box-shadow: var(--neon-glow);">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
+                        <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
+                        <p class="text-blur small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
+                    </div>
+                    <div class="ms-3 text-end" style="min-width: 150px;">
+                        <div class="progress bg-dark mb-2" style="height: 8px;">
+                            <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%"></div>
+                        </div>
+                        <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm w-100">Analytics</a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card h-100" style="background: var(--card-bg); border: none; border-left: 4px solid #ff4b2b;">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold text-white">Academic Calendar</h5>
-                    <p class="card-text text-secondary">View your personalized class routine and faculty contacts.</p>
-                    <a href="{% url 'class_schedules' %}" class="btn btn-sm btn-outline-danger">My Schedule</a>
-                </div>
-            </div>
-        </div>
+        <div class="mt-2">
+    <a href="{% url 'download_meal_summary' %}" class="btn btn-sm btn-outline-light w-100">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Download Report
+    </a>
+</div>
     </div>
 </div>
+
+<style>
+/* Notice Ticker Styles */
+.notice-ticker-container {
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 44px;
+    align-items: center;
+}
+.ticker-label {
+    background: var(--accent-blue);
+    color: #000;
+    padding: 0 20px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+.ticker-content { width: 100%; color: var(--text-main); font-size: 0.9rem; }
+.ticker-item { margin-right: 60px; font-weight: 500; }
+
+/* Dashboard Cards */
+.service-card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-neon {
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    background: transparent;
+    transition: 0.3s;
+}
+.btn-neon:hover {
+    background: var(--accent-blue);
+    color: #000;
+    box-shadow: var(--neon-glow);
+}
+</style>
 {% endblock %}

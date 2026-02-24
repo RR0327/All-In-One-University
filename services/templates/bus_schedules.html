@@ -3,11 +3,11 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-white">Bus Routes <span class="text-warning">& Schedules</span></h2>
-        <span class="badge bg-warning text-dark p-2">Live Updates</span>
+        <span class="badge bg-warning text-dark p-2 shadow-sm"><i class="bi bi-broadcast me-1"></i> Live Updates</span>
     </div>
 
     <div class="table-responsive shadow-lg rounded">
-        <table class="table table-dark table-hover mb-0" style="background: var(--card-bg);">
+        <table class="table table-dark table-hover mb-0" style="background: var(--card-bg); border: 1px solid rgba(0, 210, 255, 0.2);">
             <thead class="text-uppercase small fw-bold" style="border-bottom: 2px solid var(--accent-blue);">
                 <tr>
                     <th class="py-3 px-4">Route Name</th>
@@ -15,24 +15,77 @@
                     <th>To</th>
                     <th>Departure</th>
                     <th>Arrival</th>
+                    <th>Status / Countdown</th>
                 </tr>
             </thead>
             <tbody>
                 {% for schedule in schedules %}
-                <tr>
+                <tr class="bus-row" data-time="{{ schedule.departure_time|time:'H:i:s' }}">
                     <td class="py-3 px-4 fw-bold text-info">{{ schedule.route.route_name }}</td>
                     <td>{{ schedule.route.start_location }}</td>
                     <td>{{ schedule.route.end_location }}</td>
-                    <td class="text-success fw-bold">{{ schedule.departure_time|time:"H:i" }}</td>
-                    <td>{{ schedule.arrival_time|time:"H:i" }}</td>
+                    <td class="text-success fw-bold">
+                        {{ schedule.departure_time|time:"h:i A" }}
+                    </td>
+                    <td>
+                        {{ schedule.arrival_time|time:"h:i A" }}
+                    </td>
+                    <td>
+                        <span class="badge bg-dark border border-info countdown-timer" style="color: var(--accent-blue); min-width: 140px; display: inline-block;">
+                            Calculating...
+                        </span>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-5 text-blur">No bus schedules available for today.</td>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-exclamation-circle d-block mb-2 fs-4"></i>
+                        No bus schedules available for today.
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    function updateCountdowns() {
+        const now = new Date();
+        const rows = document.querySelectorAll('.bus-row');
+
+        rows.forEach(row => {
+            const departureStr = row.getAttribute('data-time');
+            const [hours, minutes, seconds] = departureStr.split(':');
+            
+            const departureTime = new Date();
+            departureTime.setHours(hours, minutes, seconds);
+
+            const diff = departureTime - now;
+            const timerDisplay = row.querySelector('.countdown-timer');
+
+            if (diff > 0) {
+                const totalSeconds = Math.floor(diff / 1000);
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+
+                let displayStr = "Departs in ";
+                if (h > 0) displayStr += `${h}h `;
+                displayStr += `${m}m ${s}s`;
+                
+                timerDisplay.innerText = displayStr;
+            } else {
+                timerDisplay.innerText = "Bus Departed";
+                timerDisplay.classList.remove('border-info');
+                timerDisplay.classList.add('border-secondary');
+                timerDisplay.style.color = '#6c757d';
+            }
+        });
+    }
+
+    // Initialize and set interval for 1-second updates
+    setInterval(updateCountdowns, 1000);
+    window.onload = updateCountdowns;
+</script>
 {% endblock %}

@@ -176,3 +176,28 @@ class CampusBuilding(models.Model):
 
     def __str__(self):
         return self.building_name
+
+
+class StudentWallet(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    last_updated = models.DateTimeField(
+        auto_now=True
+    )  # Consistent with your transit tracking
+
+    def __str__(self):
+        return f"{self.user.username}'s Wallet - ৳{self.balance}"
+
+
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ("Credit", "Deposit"),
+        ("Debit", "Meal Payment"),
+    )
+    wallet = models.ForeignKey(
+        StudentWallet, on_delete=models.CASCADE, related_name="transactions"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    tx_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    description = models.CharField(max_length=255)

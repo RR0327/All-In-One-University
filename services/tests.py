@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import CafeteriaMenu, BusRoute, BusSchedule
+from .models import CafeteriaMenu, BusRoute, BusSchedule, StudentWallet, Transaction
 import datetime
+from decimal import Decimal
+from .views import process_meal_payment
 
 
 class UniversityAppTests(TestCase):
@@ -43,3 +45,37 @@ class UniversityAppTests(TestCase):
     def test_bus_route_creation(self):
         """Verify bus route models work."""
         self.assertEqual(str(self.route), "Campus Express")
+
+
+class WalletSystemTest(TestCase):
+    def setUp(self):
+        """Setup initial user and wallet for testing."""
+        self.user = User.objects.create_user(
+            username="teststudent", password="password123"
+        )
+        self.wallet = StudentWallet.objects.create(
+            user=self.user, balance=Decimal("500.00")
+        )
+
+    def test_successful_meal_payment(self):
+        """Verifies credit is deducted and transaction is logged."""
+        meal_price = Decimal("150.00")
+        # Simulate booking process
+        success = process_meal_payment(self.user, meal_price)
+
+        # Refresh from DB
+        self.wallet.refresh_from_db()
+
+        self.assertTrue(success)
+        self.assertEqual(self.wallet.balance, Decimal("350.00"))
+        self.assertEqual(
+            Transaction.objects.filter(wallet=self.wallet, tx_type="Debit").count(), 1
+        )
+
+    def test_insufficient_funds(self):
+        """Ensures payments fail if balance is too low."""
+        high_price = Decimal("1000.00")
+        success = process_meal_payment(self.user, high_price)
+
+        self.assertFalse(success)
+        self.assertEqual(self.wallet.balance, Decimal("500.00"))

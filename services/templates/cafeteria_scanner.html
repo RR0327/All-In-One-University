@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4 text-center">
+    <h2 class="fw-bold text-white mb-4">Cafeteria <span class="text-info">Verification Scanner</span></h2>
+    
+    <div id="reader" class="mx-auto shadow-lg" style="max-width: 500px; border: 2px solid var(--accent-blue); border-radius: 15px; overflow: hidden;"></div>
+    
+    <div id="result" class="mt-4 p-3 rounded d-none" style="background: var(--card-bg); border: 1px solid var(--accent-blue);">
+        <h4 id="status-text" class="fw-bold"></h4>
+        <p id="details-text" class="text-secondary small"></p>
+        <button onclick="restartScanner()" class="btn btn-neon btn-sm">Scan Next</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    const html5QrCode = new Html5Qrcode("reader");
+    const resultDiv = document.getElementById('result');
+
+    const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+    function onScanSuccess(decodedText) {
+        html5QrCode.stop(); // Pause scanning
+        
+        // Call our Django verification endpoint
+        fetch(`/verify-meal/?data=${encodeURIComponent(decodedText)}`)
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.classList.remove('d-none');
+                const statusText = document.getElementById('status-text');
+                
+                if(data.status === 'success') {
+                    statusText.innerText = "✅ " + data.message;
+                    statusText.className = "text-success fw-bold";
+                    document.getElementById('details-text').innerText = JSON.stringify(data.details);
+                } else {
+                    statusText.innerText = "❌ " + data.message;
+                    statusText.className = "text-danger fw-bold";
+                }
+            });
+    }
+
+    function restartScanner() {
+        resultDiv.classList.add('d-none');
+        startScanner();
+    }
+
+    function startScanner() {
+        html5QrCode.start({ facingMode: "environment" }, qrConfig, onScanSuccess);
+    }
+
+    window.onload = startScanner;
+</script>
+{% endblock %}
