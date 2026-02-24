@@ -1,121 +1,90 @@
-# Python bytecode
-*.pyc
-*.pyo
-_pycache_/
+#################################################
+# Python
+#################################################
 
-# Virtual Environment
-.venv/
-env/
-
-# Database
-*.sqlite3
-
-# Django Secret Key
-*.env
-
-# Static and media files
-/staticfiles/
-/media/
-
-# IDE or Editor-specific files
-.idea/
-.vscode/
-
-# OS files
-.DS_Store
-
-# Created by https://www.gitignore.io
-
-### OSX ###
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Icon must end with two \r
-Icon
-
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-
-### Python ###
-# Byte-compiled / optimized / DLL files
-_pycache_/
+# Byte-compiled / optimized files
+__pycache__/
 *.py[cod]
+*$py.class
 
 # C extensions
 *.so
 
-# Distribution / packaging
-.Python
+#################################################
+# Virtual Environments
+#################################################
+
+venv/
 env/
+.venv/
+ENV/
+
+#################################################
+# Environment Variables
+#################################################
+
+.env
+.env.*
+*.env
+
+#################################################
+# Databases
+#################################################
+
+db.sqlite3
+*.sqlite3
+
+#################################################
+# Logs
+#################################################
+
+*.log
+
+#################################################
+# Build / Distribution
+#################################################
+
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
 *.egg-info/
-.installed.cfg
-*.egg
+.eggs/
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+#################################################
+# Testing / Coverage
+#################################################
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
 htmlcov/
 .tox/
 .coverage
-.cache
-nosetests.xml
-coverage.xml
+.coverage.*
+.cache/
 
-# Translations
-*.mo
-*.pot
+#################################################
+# Static & Media (Web Frameworks)
+#################################################
 
-# Sphinx documentation
-docs/_build/
+staticfiles/
+media/
+uploads/
 
-# PyBuilder
-target/
+#################################################
+# Project Generated Files (Optional)
+#################################################
 
-
-### Django ###
-*.log
-*.pot
-*.pyc
-_pycache_/
-local_settings.py
-
-.env
-db.sqlite3
-.venv
-
-
-#qr_code
 qr_codes/
-/qr_codes/
+
+#################################################
+# IDE / Editor
+#################################################
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+#################################################
+# OS Files
+#################################################
+
+.DS_Store
+Thumbs.db
