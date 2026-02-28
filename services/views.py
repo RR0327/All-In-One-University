@@ -365,17 +365,13 @@ def initiate_payment(request):
 
 @login_required
 def download_meal_summary(request):
-    """View with safety check for missing wallets."""
-    # Use get_or_create so the app never crashes if a wallet is missing
-    wallet, created = StudentWallet.objects.get_or_create(
-        user=request.user, defaults={"balance": 0.00}
-    )
-
-    # Filter for the current month's debits
+    wallet = request.user.studentwallet
+    # This fetches the 'Debit' you created: 'Lunch: Chicken Biryani'
     transactions = wallet.transactions.filter(tx_type="Debit").order_by("-timestamp")
 
     total_spent = sum(tx.amount for tx in transactions)
 
+    # Passing the fetched transactions into the PDF generator
     pdf_buffer = generate_meal_pdf(request.user, transactions, total_spent)
 
     return FileResponse(
