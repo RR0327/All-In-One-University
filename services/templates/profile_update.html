@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue);">
+                <div class="card-body p-4">
+                    <h3 class="text-white fw-bold mb-4"><i class="bi bi-person-gear me-2 text-info"></i>Update Profile</h3>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="text-secondary small">Phone Number (for SMS Alerts)</label>
+                            <input type="text" name="phone_number" class="form-control bg-dark text-white border-secondary" 
+                                   value="{{ profile.phone_number }}" placeholder="+8801XXXXXXXXX">
+                        </div>
+                        <button type="submit" class="btn btn-neon w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

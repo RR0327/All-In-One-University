@@ -3,6 +3,8 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from datetime import datetime
+from twilio.rest import Client
+from django.conf import settings
 
 
 def generate_meal_pdf(user, transactions, total_spent):
@@ -55,3 +57,22 @@ def generate_meal_pdf(user, transactions, total_spent):
 
     buffer.seek(0)
     return buffer
+
+
+def send_wallet_sms(user_phone, amount, new_balance):
+    """Sends a real-time SMS alert for wallet updates."""
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+    message = (
+        f"Campus Wallet Alert: ৳{amount} has been credited to your account. "
+        f"New Balance: ৳{new_balance}. Stay secure!"
+    )
+
+    try:
+        client.messages.create(
+            body=message,
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=user_phone,  # Ensure phone is in E.164 format (e.g., +8801...)
+        )
+    except Exception as e:
+        print(f"SMS Error: {e}")

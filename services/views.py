@@ -5,11 +5,13 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse, FileResponse
 from collections import OrderedDict
-import datetime
+
+# import datetime
 
 from .models import (
     StudentWallet,
     Transaction,
+    Profile,
     CafeteriaMenu,
     BusRoute,
     BusSchedule,
@@ -23,7 +25,7 @@ from .models import (
 )
 from .forms import MealBookingForm, RegistrationForm
 from django.db.models import Sum
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import qrcode
 import io
 import base64
@@ -33,19 +35,22 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 import uuid
+from decimal import Decimal
+from .utils import send_wallet_sms
 
 # from sslcommerz_lib.sslcommerz import sslcommerz as SSLCommerz
 from .utils import generate_meal_pdf  # # Ensure you created the utility file
 
 try:
+    # This matches the "Did you mean: 'sslcommerz'?" hint
     from sslcommerz_lib.sslcommerz import SSLCommerz
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     try:
+        # Fallback for older/different versions
         from sslcommerz_lib import SSLCommerz
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         SSLCommerz = None
-        print("Warning: SSLCommerz library could not be loaded.")
-
+        print("Warning: SSLCommerz class could not be found.")
 # ==========================================
 # 1. HOME & AUTHENTICATION
 # ==========================================
@@ -365,17 +370,87 @@ def initiate_payment(request):
 
 @login_required
 def download_meal_summary(request):
+    """Filters transactions by month and generates PDF."""
+    # Get month from GET request, default to current month
+    selected_month = request.GET.get("month", datetime.now().month)
     wallet = request.user.studentwallet
-    # This fetches the 'Debit' you created: 'Lunch: Chicken Biryani'
-    transactions = wallet.transactions.filter(tx_type="Debit").order_by("-timestamp")
+
+    # Filter for 'Debit' transactions in the selected month
+    transactions = wallet.transactions.filter(
+        tx_type="Debit",
+        timestamp__month=selected_month,
+        timestamp__year=datetime.now().year,
+    ).order_by("-timestamp")
 
     total_spent = sum(tx.amount for tx in transactions)
 
-    # Passing the fetched transactions into the PDF generator
+    # Generate PDF using the filtered data
     pdf_buffer = generate_meal_pdf(request.user, transactions, total_spent)
 
+    month_name = datetime.strptime(str(selected_month), "%m").strftime("%B")
     return FileResponse(
         pdf_buffer,
         as_attachment=True,
-        filename=f"Meal_Summary_{request.user.username}.pdf",
+        filename=f"Meal_Summary_{month_name}_{request.user.username}.pdf",
     )
+
+
+@login_required
+def payment_success(request):
+    """
+    Handles the successful payment callback from SSLCommerz.
+    Updates the balance and sends an automated SMS.
+    """
+    # Capture transaction data (SSLCommerz typically sends this via POST)
+    amount_str = request.POST.get("amount") or request.GET.get("amount", "500.00")
+    tran_id = request.POST.get("tran_id") or request.GET.get("tran_id", "TXN_SUCCESS")
+    amount = Decimal(amount_str)
+
+    # Use atomic transaction to ensure both balance and log are updated together
+    with transaction.atomic():
+        wallet = request.user.studentwallet
+        wallet.balance += amount
+        wallet.save()
+
+        # Log the credit transaction
+        Transaction.objects.create(
+            wallet=wallet,
+            amount=amount,
+            tx_type="Credit",
+            description=f"SSLCommerz Top-up | ID: {tran_id}",
+        )
+
+    # Trigger Auto-SMS Notification
+    try:
+        # Fetch phone number from the linked Profile
+        profile = request.user.profile
+        if profile.phone_number:
+            send_wallet_sms(profile.phone_number, amount, wallet.balance)
+    except (Profile.DoesNotExist, Exception):
+        # Fail silently if profile isn't set up yet so the user still sees success page
+        pass
+
+    context = {
+        "status": "Success",
+        "amount": amount,
+        "tran_id": tran_id,
+        "new_balance": wallet.balance,
+    }
+    # Path matches your current template structure
+    return render(request, "payment_status.html", context)
+
+
+@login_required
+def profile_update(request):
+    """Allows students to update their contact info for SMS alerts."""
+    # Ensure a profile exists for the user
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        phone = request.POST.get("phone_number")
+        profile.phone_number = phone
+        profile.save()
+        return redirect("dashboard")
+
+    # Updated path to match your actual structure
+    return render(request, "profile_update.html", {"profile": profile})

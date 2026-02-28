@@ -207,3 +207,13 @@ class Transaction(models.Model):
 def create_user_wallet(sender, instance, created, **kwargs):
     if created:
         StudentWallet.objects.create(user=instance, balance=500.00)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(
+        max_length=15, blank=True, help_text="Format: +88017XXXXXXXX"
+    )
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"

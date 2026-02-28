@@ -97,48 +97,30 @@
 </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-Skyblue" href="{% url 'index' %}">
-            Campus<span style="color: var(--accent-blue);">MS</span>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{% url 'index' %}">
+            <span style="color: var(--accent-blue);">CAMPUS</span> Portal
         </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="status-indicator d-none d-lg-flex ms-3 align-items-center">
-                <div class="pulse-dot"></div>
-                <div class="d-flex flex-column" style="line-height: 1;">
-                    <span class="small fw-bold">System Online</span>
-                    <span id="sync-time" class="text-muted" style="font-size: 0.65rem; letter-spacing: 0.5px;">Last Sync: Just now</span>
-                </div>
-            </div>
-
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
                 </li>
-                
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'cafeteria_main' %}">Cafeteria</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-neon ms-lg-3" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-neon ms-lg-3" href="{% url 'register' %}">Sign Up</a>
-                    </li>
-                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cafeteria_main' %}"><i class="bi bi-egg-fried me-1"></i> Cafeteria</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile_update' %}"><i class="bi bi-person-gear me-1"></i> My Profile</a>
+                </li>
+                <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                    <a class="btn btn-sm btn-neon px-3" href="{% url 'logout' %}">Logout</a>
+                </li>
             </ul>
         </div>
     </div>

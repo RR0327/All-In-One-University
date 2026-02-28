@@ -73,7 +73,7 @@
                         <p class="text-white small mb-0">Status: Fully Encrypted & Secure</p>
                     </div>
                     <div class="ms-3">
-                        <button class="btn btn-outline-success px-4">Add Credit</button>
+                        <a href="{% url 'initiate_payment' %}" class="btn btn-outline-success px-4">Add Credit</a>
                     </div>
                 </div>
             </div>
@@ -85,8 +85,9 @@
             <div class="flex-grow-1">
                 <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
                 <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
-                <p class="text-white small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
+                <p class="text-muted small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
             </div>
+
             <div class="ms-3 text-end" style="min-width: 160px;">
                 <div class="progress bg-dark mb-2" style="height: 8px;">
                     <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%"></div>
@@ -95,9 +96,27 @@
                 <div class="d-grid gap-2">
                     <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm py-1">Analytics Details</a>
                     
-                    <a href="{% url 'download_meal_summary' %}" class="btn btn-sm btn-outline-light py-1" style="font-size: 0.75rem;">
-                        <i class="bi bi-file-earmark-pdf me-1"></i>Download Report
-                    </a>
+                    <form action="{% url 'download_meal_summary' %}" method="GET">
+                        <div class="d-grid gap-2">
+                            <select name="month" class="form-select form-select-sm bg-dark text-white border-info mb-1" style="font-size: 0.75rem;">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12" selected>December</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-light py-1" style="font-size: 0.75rem;">
+                                <i class="bi bi-file-earmark-pdf me-1"></i>Export Monthly Report
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

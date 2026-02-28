@@ -30,4 +30,7 @@ urlpatterns = [
         views.download_meal_summary,
         name="download_meal_summary",
     ),
+    path("payment/initiate/", views.initiate_payment, name="initiate_payment"),
+    path("payment/success/", views.payment_success, name="payment_success"),
+    path("profile/update/", views.profile_update, name="profile_update"),
 ]

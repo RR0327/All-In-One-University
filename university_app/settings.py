@@ -143,3 +143,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SSLCOMMERZ_STORE_ID = os.environ.get("SSLCOMMERZ_STORE_ID")
 SSLCOMMERZ_STORE_PASS = os.environ.get("SSLCOMMERZ_STORE_PASS")
 SSLCOMMERZ_SANDBOX = os.environ.get("SSLCOMMERZ_SANDBOX") == "True"
+
+
+TWILIO_ACCOUNT_SID = "your_sid_here"
+TWILIO_AUTH_TOKEN = "your_auth_token_here"
+TWILIO_PHONE_NUMBER = "+1234567890"  # Your Twilio number
