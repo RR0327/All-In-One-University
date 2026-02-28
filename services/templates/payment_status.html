@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow-lg" style="background: var(--card-bg);" {% if status == 'Success' %}style="border: 1px solid #00ff88;"{% else %}style="border: 1px solid #ff4b2b;"{% endif %}>
+                <div class="card-body p-5">
+                    {% if status == 'Success' %}
+                        <div class="mb-4">
+                            <i class="bi bi-check-circle-fill" style="font-size: 5rem; color: #00ff88;"></i>
+                        </div>
+                        <h2 class="text-white fw-bold">Payment Successful!</h2>
+                        <p class="text-secondary">Your Campus Wallet has been credited.</p>
+                        
+                        <div class="my-4 p-3 rounded bg-dark border border-secondary">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Transaction ID:</span>
+                                <span class="text-white fw-mono">{{ tran_id }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Amount Added:</span>
+                                <span class="text-success fw-bold">৳{{ amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">New Balance:</span>
+                                <span class="text-info fw-bold">৳{{ new_balance }}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="small text-muted mb-4">A confirmation SMS has been sent to your registered mobile number.</p>
+                    {% else %}
+                        <div class="mb-4">
+                            <i class="bi bi-exclamation-triangle-fill" style="font-size: 5rem; color: #ff4b2b;"></i>
+                        </div>
+                        <h2 class="text-white fw-bold">Payment Failed</h2>
+                        <p class="text-secondary">Something went wrong with the transaction. Please try again or contact support.</p>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'dashboard' %}" class="btn btn-neon">Back to Dashboard</a>
+                        <a href="{% url 'cafeteria_main' %}" class="btn btn-outline-secondary">Go to Cafeteria</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Mono font for transaction IDs to look more technical */
+    .fw-mono { font-family: 'Courier New', Courier, monospace; letter-spacing: 1px; }
+</style>
+{% endblock %}

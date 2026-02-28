@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="container-fluid pt-4">
     <div class="row mb-4 align-items-center">
         <div class="col-md-8">
@@ -30,7 +31,7 @@
 
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid var(--accent-blue);">
+            <div class="card h-100 service-card">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title fw-bold text-white"><i class="bi bi-egg-fried me-2 text-info"></i>Cafeteria</h5>
                     <p class="card-text text-secondary small">Daily menus and meal subscription management.</p>
@@ -43,7 +44,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid #f9d423;">
+            <div class="card h-100 service-card transport-card">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title fw-bold text-white"><i class="bi bi-bus-front me-2 text-warning"></i>Transport</h5>
                     <p class="card-text text-secondary small">Real-time bus tracking and schedule updates.</p>
@@ -53,7 +54,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 service-card" style="background: var(--card-bg); border-top: 4px solid #ff4b2b;">
+            <div class="card h-100 service-card academics-card">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title fw-bold text-white"><i class="bi bi-calendar3 me-2 text-danger"></i>Academics</h5>
                     <p class="card-text text-secondary small">Class routines and personalized academic calendar.</p>
@@ -63,113 +64,155 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid #00ff88; border-top: 4px solid #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);">
-                <div class="card-body d-flex align-items-center">
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card h-100 shadow-lg transition-card" 
+                 style="background: var(--card-bg); border: 1px solid {% if user.studentwallet.balance < 50 %}#ff4b2b{% else %}#00ff88{% endif %};">
+                <div class="card-body d-flex flex-column flex-sm-row align-items-sm-center">
                     <div class="flex-grow-1">
-                        <h6 class="fw-bold" style="color: #00ff88;"><i class="bi bi-wallet2 me-2"></i>Campus Wallet</h6>
+                        <h6 class="fw-bold" style="color: {% if user.studentwallet.balance < 50 %}#ff4b2b{% else %}#00ff88{% endif %};">
+                            <i class="bi bi-wallet2 me-2"></i>Campus Wallet
+                        </h6>
                         <div class="h2 fw-bold text-white mb-0">৳{{ user.studentwallet.balance }}</div>
-                        <p class="text-white small mb-0">Status: Fully Encrypted & Secure</p>
+                        <p class="small mb-0 {% if user.studentwallet.balance < 50 %}text-danger fw-bold animate-pulse{% else %}text-white{% endif %}">
+                            {% if user.studentwallet.balance < 50 %}
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Low Balance: Please Top-up
+                            {% else %}
+                                Status: Fully Encrypted & Secure
+                            {% endif %}
+                        </p>
                     </div>
-                    <div class="ms-3">
-                        <a href="{% url 'initiate_payment' %}" class="btn btn-outline-success px-4">Add Credit</a>
+                    <div class="mt-3 mt-sm-0 ms-sm-3 d-grid gap-2">
+                        <a href="{% url 'initiate_payment' %}" class="btn {% if user.studentwallet.balance < 50 %}btn-danger{% else %}btn-outline-success{% endif %} px-4">Add Credit</a>
+                        <a href="{% url 'transaction_history' %}" class="btn btn-sm btn-outline-secondary">History</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-    <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue); box-shadow: var(--neon-glow);">
-        <div class="card-body d-flex align-items-center">
-            <div class="flex-grow-1">
-                <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
-                <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
-                <p class="text-muted small mb-0">{{ start_date|date:"M d" }} - {{ end_date|date:"M d" }}</p>
-            </div>
-
-            <div class="ms-3 text-end" style="min-width: 160px;">
-                <div class="progress bg-dark mb-2" style="height: 8px;">
-                    <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 75%"></div>
-                </div>
-                
-                <div class="d-grid gap-2">
-                    <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm py-1">Analytics Details</a>
-                    
-                    <form action="{% url 'download_meal_summary' %}" method="GET">
-                        <div class="d-grid gap-2">
-                            <select name="month" class="form-select form-select-sm bg-dark text-white border-info mb-1" style="font-size: 0.75rem;">
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
-                                <option value="5">May</option>
-                                <option value="6">June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12" selected>December</option>
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-outline-light py-1" style="font-size: 0.75rem;">
-                                <i class="bi bi-file-earmark-pdf me-1"></i>Export Monthly Report
-                            </button>
+        <div class="col-12 col-md-6">
+            <div class="card h-100 shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue);">
+                <div class="card-body d-flex flex-column flex-sm-row align-items-sm-center">
+                    <div class="flex-grow-1">
+                        <h6 class="text-info fw-bold"><i class="bi bi-graph-up-arrow me-2"></i>Weekly Meal Budget</h6>
+                        <div class="h2 fw-bold text-white mb-0">৳{{ weekly_total }}</div>
+                        
+                        <div class="mt-2 p-2 rounded bg-dark border border-secondary d-inline-block">
+                            <small class="text-secondary d-block" style="font-size: 0.65rem;">BOOKING ENDS IN:</small>
+                            <span id="meal-timer" class="text-warning fw-bold" style="font-size: 0.9rem;">00:00:00</span>
                         </div>
-                    </form>
+                    </div>
+                    
+                    <div class="mt-3 mt-sm-0 ms-sm-3 text-sm-end" style="min-width: 180px;">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'cafeteria_main' %}" class="btn btn-neon btn-sm py-1">Analytics</a>
+                            <form action="{% url 'download_meal_summary' %}" method="GET">
+                                <div class="d-grid gap-1">
+                                    <select name="month" class="form-select form-select-sm bg-dark text-white border-info" style="font-size: 0.7rem;">
+                                        <option value="1">January</option>
+                                        <option value="2" selected>February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-light py-1" style="font-size: 0.7rem;">
+                                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 
 <style>
-/* Notice Ticker Styles */
-.notice-ticker-container {
-    display: flex;
-    background: var(--card-bg);
-    border: 1px solid rgba(0, 210, 255, 0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    height: 44px;
-    align-items: center;
-}
-.ticker-label {
-    background: var(--accent-blue);
-    color: #000;
-    padding: 0 20px;
-    font-weight: 800;
-    font-size: 0.75rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-}
-.ticker-content { width: 100%; color: var(--text-main); font-size: 0.9rem; }
-.ticker-item { margin-right: 60px; font-weight: 500; }
+    /* CSS Polished for Mobile and Linting */
+    .notice-ticker-container {
+        display: flex;
+        background-color: var(--card-bg);
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        border-radius: 8px;
+        overflow: hidden;
+        height: 44px;
+        align-items: center;
+    }
+    .ticker-label {
+        background-color: var(--accent-blue);
+        color: #000000;
+        padding: 0 20px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    .ticker-content { width: 100%; color: var(--text-main); font-size: 0.9rem; }
+    .ticker-item { margin-right: 60px; font-weight: 500; }
+    
+    .service-card {
+        background-color: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 4px solid var(--accent-blue);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transport-card { border-top-color: #f9d423; }
+    .academics-card { border-top-color: #ff4b2b; }
 
-/* Dashboard Cards */
-.service-card {
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.btn-neon {
-    border: 1px solid var(--accent-blue);
-    color: var(--accent-blue);
-    background: transparent;
-    transition: 0.3s;
-}
-.btn-neon:hover {
-    background: var(--accent-blue);
-    color: #000;
-    box-shadow: var(--neon-glow);
-}
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .btn-neon {
+        border: 1px solid var(--accent-blue);
+        color: var(--accent-blue);
+        background-color: transparent;
+        transition: 0.3s;
+    }
+    .btn-neon:hover {
+        background-color: var(--accent-blue);
+        color: #000000;
+        box-shadow: var(--neon-glow);
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    .animate-pulse { animation: pulse 2s infinite; }
 </style>
+
+<script>
+    function updateMealTimer() {
+        const now = new Date();
+        const deadline = new Date();
+        
+        // Deadline set to 10:00 PM
+        deadline.setHours(22, 0, 0, 0);
+
+        if (now > deadline) {
+            deadline.setDate(deadline.getDate() + 1);
+        }
+
+        const diff = deadline - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const hDisplay = hours < 10 ? "0" + hours : hours;
+        const mDisplay = minutes < 10 ? "0" + minutes : minutes;
+        const sDisplay = seconds < 10 ? "0" + seconds : seconds;
+
+        const timerElement = document.getElementById("meal-timer");
+        if (timerElement) {
+            timerElement.innerHTML = `${hDisplay}:${mDisplay}:${sDisplay}`;
+        }
+    }
+
+    setInterval(updateMealTimer, 1000);
+    updateMealTimer();
+</script>
+
 {% endblock %}

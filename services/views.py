@@ -42,15 +42,13 @@ from .utils import send_wallet_sms
 from .utils import generate_meal_pdf  # # Ensure you created the utility file
 
 try:
-    # This matches the "Did you mean: 'sslcommerz'?" hint
-    from sslcommerz_lib.sslcommerz import SSLCommerz
-except (ImportError, ModuleNotFoundError):
+    from sslcommerz_lib import SSLCommerz
+except ImportError:
+    # Fallback for alternative installation paths
     try:
-        # Fallback for older/different versions
-        from sslcommerz_lib import SSLCommerz
-    except (ImportError, ModuleNotFoundError):
+        from sslcommerz_python.payment import SSLCommerz
+    except ImportError:
         SSLCommerz = None
-        print("Warning: SSLCommerz class could not be found.")
 # ==========================================
 # 1. HOME & AUTHENTICATION
 # ==========================================
@@ -328,44 +326,66 @@ def transaction_history_view(request):
 # Payment gateway integration example (SSLCommerz)
 @login_required
 def initiate_payment(request):
-    """Initializes a secure payment session with SSLCommerz."""
-    # Use environment variables for Store ID and Password
-    mypayment = SSLCommerz(
-        {
-            "store_id": settings.SSLCOMMERZ_STORE_ID,
-            "store_pass": settings.SSLCOMMERZ_STORE_PASS,
-            "issandbox": settings.SSLCOMMERZ_SANDBOX,
-        }
-    )
+    """Initializes SSLCommerz payment with a safety check."""
 
-    total_amount = request.POST.get("amount", 500)  # Amount to add to wallet
-    tran_id = str(uuid.uuid4())[:10]  # Unique transaction ID
+    # 1. Safety Check: If the library didn't import, don't try to call it
+    if SSLCommerz is None:
+        return render(
+            request,
+            "payment_status.html",
+            {
+                "status": "Error",
+                "error_message": "Payment Gateway is currently unavailable. Please check library installation.",
+            },
+        )
 
+    # 2. Configuration from settings.py
+    settings_dict = {
+        "store_id": settings.SSLCOMMERZ_STORE_ID,
+        "store_pass": settings.SSLCOMMERZ_STORE_PASS,
+        "issandbox": settings.SSLCOMMERZ_SANDBOX,
+    }
+
+    # This is where the 'NoneType' error was happening; now protected by the check above
+    ssl_client = SSLCommerz(settings_dict)
+
+    # 3. Transaction Data
     post_body = {
-        "total_amount": total_amount,
+        "total_amount": 500.00,
         "currency": "BDT",
-        "tran_id": tran_id,
-        "success_url": "http://127.0.0.1:8000/payment-success/",
-        "fail_url": "http://127.0.0.1:8000/payment-fail/",
-        "cancel_url": "http://127.0.0.1:8000/payment-cancel/",
-        # "success_url": request.build_absolute_uri("/payment-success/"),
-        # "fail_url": request.build_absolute_uri("/payment-fail/"),
-        # "cancel_url": request.build_absolute_uri("/payment-cancel/"),
+        "tran_id": str(uuid.uuid4())[:10],
+        "success_url": "http://127.0.0.1:8000/payment/success/",
+        "fail_url": "http://127.0.0.1:8000/payment/fail/",
+        "cancel_url": "http://127.0.0.1:8000/payment/cancel/",
         "emi_option": 0,
         "cus_name": request.user.username,
         "cus_email": request.user.email,
-        "cus_phone": "01XXXXXXXXX",  # Can be pulled from a Profile model
-        "cus_add1": "Cumilla",  # User's location
+        "cus_phone": "01700000000",
+        "cus_add1": "Cumilla",
         "cus_city": "Cumilla",
         "cus_country": "Bangladesh",
         "shipping_method": "NO",
-        "product_name": "Wallet Credit",
+        "multi_card_name": "",
+        "num_of_item": 1,
+        "product_name": "Wallet Top-up",
         "product_category": "Digital",
         "product_profile": "general",
     }
 
-    response = mypayment.init_payment(post_body)
-    return redirect(response["GatewayPageURL"])
+    # 4. Request Payment URL from SSLCommerz
+    response = ssl_client.init_payment(post_body)
+
+    if response and "GatewayPageURL" in response:
+        return redirect(response["GatewayPageURL"])
+    else:
+        return render(
+            request,
+            "payment_status.html",
+            {
+                "status": "Error",
+                "error_message": "Failed to communicate with SSLCommerz.",
+            },
+        )
 
 
 @login_required
@@ -454,3 +474,22 @@ def profile_update(request):
 
     # Updated path to match your actual structure
     return render(request, "profile_update.html", {"profile": profile})
+
+
+@login_required
+def transaction_history(request):
+    """Provides a full audit trail of wallet activity."""
+    wallet = request.user.studentwallet
+    # Get transaction type from query params (All, Credit, or Debit)
+    tx_type = request.GET.get("type")
+
+    transactions = wallet.transactions.all().order_by("-timestamp")
+
+    if tx_type in ["Credit", "Debit"]:
+        transactions = transactions.filter(tx_type=tx_type)
+
+    return render(
+        request,
+        "transactions.html",
+        {"transactions": transactions, "wallet": wallet, "current_filter": tx_type},
+    )

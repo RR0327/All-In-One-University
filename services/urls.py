@@ -33,4 +33,5 @@ urlpatterns = [
     path("payment/initiate/", views.initiate_payment, name="initiate_payment"),
     path("payment/success/", views.payment_success, name="payment_success"),
     path("profile/update/", views.profile_update, name="profile_update"),
+    path("wallet/history/", views.transaction_history, name="transaction_history"),
 ]
