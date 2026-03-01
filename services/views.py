@@ -38,17 +38,19 @@ import uuid
 from decimal import Decimal
 from .utils import send_wallet_sms
 
-# from sslcommerz_lib.sslcommerz import sslcommerz as SSLCommerz
 from .utils import generate_meal_pdf  # # Ensure you created the utility file
 
+SSLCommerz = None
 try:
-    from sslcommerz_lib import SSLCommerz
+    from sslcommerz_lib import SSLCOMMERZ as SSLCommerz
 except ImportError:
-    # Fallback for alternative installation paths
     try:
-        from sslcommerz_python.payment import SSLCommerz
+        from sslcommerz_lib.sslcommerz import SSLCOMMERZ as SSLCommerz
     except ImportError:
-        SSLCommerz = None
+        try:
+            from sslcommerz_python.payment import SSLCommerz
+        except ImportError:
+            SSLCommerz = None
 # ==========================================
 # 1. HOME & AUTHENTICATION
 # ==========================================
@@ -346,7 +348,16 @@ def initiate_payment(request):
         "issandbox": settings.SSLCOMMERZ_SANDBOX,
     }
 
-    # This is where the 'NoneType' error was happening; now protected by the check above
+    if not settings.SSLCOMMERZ_STORE_ID or not settings.SSLCOMMERZ_STORE_PASS:
+        return render(
+            request,
+            "payment_status.html",
+            {
+                "status": "Error",
+                "error_message": "Payment credentials are missing. Please set SSLCOMMERZ_STORE_ID and SSLCOMMERZ_STORE_PASS.",
+            },
+        )
+
     ssl_client = SSLCommerz(settings_dict)
 
     # 3. Transaction Data
@@ -373,7 +384,12 @@ def initiate_payment(request):
     }
 
     # 4. Request Payment URL from SSLCommerz
-    response = ssl_client.init_payment(post_body)
+    if hasattr(ssl_client, "init_payment"):
+        response = ssl_client.init_payment(post_body)
+    elif hasattr(ssl_client, "createSession"):
+        response = ssl_client.createSession(post_body)
+    else:
+        response = None
 
     if response and "GatewayPageURL" in response:
         return redirect(response["GatewayPageURL"])

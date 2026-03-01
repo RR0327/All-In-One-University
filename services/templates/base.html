@@ -94,6 +94,16 @@
         color: #000 !important; 
         box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
     }
+
+    input[type="date"] {
+        color-scheme: white;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(1.2);
+        opacity: 1;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
@@ -110,17 +120,26 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'cafeteria_main' %}"><i class="bi bi-egg-fried me-1"></i> Cafeteria</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profile_update' %}"><i class="bi bi-person-gear me-1"></i> My Profile</a>
-                </li>
-                <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-                    <a class="btn btn-sm btn-neon px-3" href="{% url 'logout' %}">Logout</a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2 me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile_update' %}"><i class="bi bi-person-gear me-1"></i> My Profile</a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <a class="btn btn-sm btn-neon px-3" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <a class="btn btn-sm btn-neon px-3" href="{% url 'register' %}">Sign Up</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
