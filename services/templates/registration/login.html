@@ -1,26 +1,196 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card bg-dark text-white border-secondary shadow-lg">
-            <div class="card-body p-5">
-                <h3 class="text-center fw-bold mb-4">Portal <span class="text-info">Login</span></h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label small text-uppercase text-blur">Username</label>
-                        <input type="text" name="username" class="form-control bg-black border-secondary text-white">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small text-uppercase text-blur">Password</label>
-                        <input type="password" name="password" class="form-control bg-black border-secondary text-white">
-                    </div>
-                    <button type="submit" class="btn btn-info w-100 fw-bold py-2 mb-3">Login</button>
-                </form>
-                <div class="text-center">
-                    <p class="small text-blur">Don't have an account? <a href="{% url 'register' %}" class="text-info text-decoration-none">Sign Up</a></p>
+<style>
+    .login-shell {
+        min-height: calc(100vh - 170px);
+        display: flex;
+        align-items: center;
+    }
+
+    .login-shell .login-wrapper {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        background: #0b1e33;
+        border: 1px solid #1f2937;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    .login-shell .login-brand {
+        background: linear-gradient(135deg, #0b1e33 0%, #061526 100%);
+    }
+
+    .login-shell .brand-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .login-shell .brand-title .accent,
+    .login-shell .heading .accent {
+        color: #22d3ee;
+    }
+
+    .login-shell .brand-text,
+    .login-shell .muted,
+    .login-shell .form-label {
+        color: #94a3b8;
+    }
+
+    .login-shell .divider {
+        width: 96px;
+        height: 4px;
+        border-radius: 999px;
+        background: #22d3ee;
+    }
+
+    .login-shell .login-form-panel {
+        background: #0b1e33;
+    }
+
+    .login-shell .heading {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #f8fafc;
+    }
+
+    .login-shell .form-control {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #f8fafc;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .login-shell .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    .login-shell .form-control:focus {
+        background: #1f2937;
+        border-color: #22d3ee;
+        box-shadow: 0 0 0 0.12rem rgba(34, 211, 238, 0.3);
+        color: #f8fafc;
+    }
+
+    .login-shell .btn-signin {
+        width: 100%;
+        background: #22d3ee;
+        color: #020617;
+        font-weight: 600;
+        border: 0;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .login-shell .btn-signin:hover,
+    .login-shell .btn-signin:focus {
+        background: #1ac6df;
+        color: #020617;
+    }
+
+    .login-shell a.link-primary {
+        color: #22d3ee !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        text-decoration: none;
+    }
+
+    .login-shell a.link-primary:hover {
+        text-decoration: underline;
+    }
+
+    .login-shell a.link-alt {
+        color: #facc15 !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        text-decoration: none;
+    }
+
+    .login-shell a.link-alt:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="login-shell py-4">
+    <div class="login-wrapper row g-0">
+        <div class="col-md-6 d-none d-md-flex flex-column justify-content-center px-5 py-5 login-brand">
+            <h1 class="brand-title mb-4"><span class="accent">CAMPUS</span> Portal</h1>
+            <p class="brand-text fs-5 mb-4">
+                Access your academic dashboard, campus events, and engagement tools securely.
+            </p>
+            <div class="divider mt-4"></div>
+        </div>
+
+        <div class="col-12 col-md-6 login-form-panel px-4 py-5 px-md-5">
+            <h2 class="heading mb-4">Welcome Back <span class="accent">Student</span></h2>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger py-2" role="alert">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
                 </div>
-            </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input
+                        type="text"
+                        name="username"
+                        id="id_username"
+                        value="{{ form.username.value|default:'' }}"
+                        placeholder="Enter your name"
+                        class="form-control"
+                        autocomplete="username"
+                        required
+                    >
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="id_password"
+                        placeholder="Enter your password"
+                        class="form-control"
+                        autocomplete="current-password"
+                        required
+                    >
+                    {% if form.password.errors %}
+                        <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center small mb-4">
+                    <label class="d-flex align-items-center gap-2 muted mb-0">
+                        <input type="checkbox" class="form-check-input m-0" style="accent-color: #22d3ee;">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="link-primary">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-signin">Sign In</button>
+
+                <p class="text-center small muted mt-4 mb-0">
+                    Don't have an account?
+                    <a href="{% url 'register' %}" class="link-alt">Create one</a>
+                </p>
+            </form>
         </div>
     </div>
 </div>

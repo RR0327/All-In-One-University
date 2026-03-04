@@ -122,6 +122,8 @@ USE_TZ = True  ## Keep this True to handle daylight savings/offsets correctly
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "services", "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Authentication Flow
 LOGIN_URL = "/login/"

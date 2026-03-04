@@ -1,23 +1,398 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg" style="background: var(--card-bg); border: 1px solid var(--accent-blue);">
-                <div class="card-body p-4">
-                    <h3 class="text-white fw-bold mb-4"><i class="bi bi-person-gear me-2 text-info"></i>Update Profile</h3>
-                    <form method="POST">
+<style>
+    .profile-ui {
+        color: #f8fafc;
+    }
+
+    .profile-ui .title {
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .profile-ui .accent-cyan {
+        color: #22d3ee;
+    }
+
+    .profile-ui .accent-yellow {
+        color: #facc15;
+    }
+
+    .profile-ui .muted {
+        color: #94a3b8;
+    }
+
+    .profile-ui .panel {
+        background: #0b1e33;
+        border: 1px solid #1f2937;
+        border-radius: 1rem;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        padding: 2rem;
+    }
+
+    .profile-ui .avatar-wrap {
+        position: relative;
+        width: 128px;
+        height: 128px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .profile-ui .avatar-default,
+    .profile-ui .avatar-preview {
+        width: 128px;
+        height: 128px;
+        border-radius: 999px;
+        border: 4px solid #1f2937;
+        object-fit: cover;
+    }
+
+    .profile-ui .avatar-default {
+        background: #1f2937;
+        color: #22d3ee;
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-ui .avatar-upload-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: #22d3ee;
+        color: #020617;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-ui .field-input {
+        width: 100%;
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 0.5rem;
+        color: #f8fafc;
+        padding: 0.6rem 0.9rem;
+        outline: none;
+    }
+
+    .profile-ui .field-input:focus {
+        border-color: #22d3ee;
+        box-shadow: 0 0 0 0.12rem rgba(34, 211, 238, 0.25);
+    }
+
+    .profile-ui .btn-cyan {
+        border: 1px solid #22d3ee;
+        color: #22d3ee;
+        background: transparent;
+        border-radius: 0.5rem;
+        padding: 0.38rem 0.85rem;
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+
+    .profile-ui .btn-cyan:hover {
+        background: #22d3ee;
+        color: #020617;
+    }
+
+    .profile-ui .btn-cyan-solid {
+        border: 1px solid #22d3ee;
+        color: #020617;
+        background: #22d3ee;
+        border-radius: 0.5rem;
+        padding: 0.55rem 1rem;
+        font-weight: 600;
+    }
+
+    .profile-ui .btn-yellow {
+        width: 100%;
+        border: 1px solid #facc15;
+        color: #020617;
+        background: #facc15;
+        border-radius: 0.5rem;
+        padding: 0.55rem 1rem;
+        font-weight: 600;
+    }
+
+    .profile-ui .table-wrap {
+        overflow-x: auto;
+    }
+
+    .profile-ui table {
+        min-width: 640px;
+        width: 100%;
+    }
+
+    .profile-ui th,
+    .profile-ui td {
+        padding: 0.75rem 0.25rem;
+        border-bottom: 1px solid #374151;
+        font-size: 0.9rem;
+    }
+
+    .profile-ui th {
+        color: #94a3b8;
+        font-weight: 500;
+        text-align: left;
+    }
+</style>
+
+<div class="profile-ui py-4 py-lg-5">
+    <h2 class="title mb-4 mb-lg-5">My <span class="accent-cyan">Profile</span></h2>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <div class="d-grid gap-4">
+                <div class="panel text-center">
+                    <form method="POST" enctype="multipart/form-data" id="profileImageForm">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="text-secondary small">Phone Number (for SMS Alerts)</label>
-                            <input type="text" name="phone_number" class="form-control bg-dark text-white border-secondary" 
-                                   value="{{ profile.phone_number }}" placeholder="+8801XXXXXXXXX">
+                        <input type="hidden" name="form_type" value="image_upload">
+
+                        <div class="avatar-wrap">
+                            {% if profile.profile_image %}
+                                <img id="profilePreview" src="{{ profile.profile_image.url }}" class="avatar-preview" alt="Profile image">
+                                <div id="defaultAvatar" class="avatar-default d-none">{{ initials }}</div>
+                            {% else %}
+                                <img id="profilePreview" src="" class="avatar-preview d-none" alt="Profile image preview">
+                                <div id="defaultAvatar" class="avatar-default">{{ initials }}</div>
+                            {% endif %}
+
+                            <label for="profileUpload" class="avatar-upload-btn">+</label>
+                            <input
+                                type="file"
+                                name="profile_image"
+                                id="profileUpload"
+                                accept="image/*"
+                                class="d-none"
+                            >
                         </div>
-                        <button type="submit" class="btn btn-neon w-100">Save Changes</button>
+                    </form>
+
+                    <h3 class="h5 fw-semibold mb-1">{{ display_name }}</h3>
+                    <p class="muted small mb-1">Username: {{ request.user.username }}</p>
+                    <p class="muted small mb-1">Email: {{ request.user.email|default:"Not provided" }}</p>
+                    <p class="muted small mb-0">Phone: {{ profile.phone_number|default:"Not added" }}</p>
+                    <div class="mt-4 mx-auto" style="height:4px; width:64px; background:#22d3ee; border-radius:999px;"></div>
+                </div>
+
+                <div class="panel">
+                    <h4 class="h5 fw-semibold mb-4 accent-yellow">Security Settings</h4>
+                    <form method="POST" class="d-grid gap-3" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="security_update">
+                        {% if password_form.non_field_errors %}
+                            <div class="small text-danger">{{ password_form.non_field_errors|striptags }}</div>
+                        {% endif %}
+                        <div>
+                            <label for="id_old_password" class="muted small d-block mb-2">Current Password</label>
+                            <input
+                                type="password"
+                                id="id_old_password"
+                                name="old_password"
+                                class="field-input"
+                                placeholder="Enter current password"
+                                required
+                            >
+                            {% if password_form.old_password.errors %}
+                                <div class="small text-danger mt-1">{{ password_form.old_password.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="id_new_password1" class="muted small d-block mb-2">New Password</label>
+                            <input
+                                type="password"
+                                id="id_new_password1"
+                                name="new_password1"
+                                class="field-input"
+                                placeholder="Enter new password"
+                                required
+                            >
+                            {% if password_form.new_password1.errors %}
+                                <div class="small text-danger mt-1">{{ password_form.new_password1.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="id_new_password2" class="muted small d-block mb-2">Confirm New Password</label>
+                            <input
+                                type="password"
+                                id="id_new_password2"
+                                name="new_password2"
+                                class="field-input"
+                                placeholder="Confirm new password"
+                                required
+                            >
+                            {% if password_form.new_password2.errors %}
+                                <div class="small text-danger mt-1">{{ password_form.new_password2.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn-yellow">Update Password</button>
                     </form>
                 </div>
             </div>
         </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="d-grid gap-4">
+                <div class="panel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="h5 fw-semibold mb-0 accent-cyan">Personal Information</h4>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="personal_info">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6">
+                                <label for="email" class="muted small d-block mb-1">Email</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    value="{{ request.user.email }}"
+                                    placeholder="student@campus.edu"
+                                    class="field-input"
+                                >
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="phone_number" class="muted small d-block mb-1">Phone</label>
+                                <input
+                                    type="tel"
+                                    name="phone_number"
+                                    id="phone_number"
+                                    value="{{ profile.phone_number }}"
+                                    placeholder="+880 1XXXXXXXXX"
+                                    maxlength="15"
+                                    class="field-input"
+                                >
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="date_of_birth" class="muted small d-block mb-1">Date of Birth</label>
+                                <input
+                                    type="date"
+                                    name="date_of_birth"
+                                    id="date_of_birth"
+                                    value="{% if profile.date_of_birth %}{{ profile.date_of_birth|date:'Y-m-d' }}{% endif %}"
+                                    class="field-input"
+                                >
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="blood_group" class="muted small d-block mb-1">Blood Group</label>
+                                <input
+                                    type="text"
+                                    name="blood_group"
+                                    id="blood_group"
+                                    value="{{ profile.blood_group }}"
+                                    placeholder="e.g. O+"
+                                    maxlength="5"
+                                    class="field-input"
+                                >
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button type="submit" class="btn-cyan-solid">Save Changes</button>
+                            {% comment %} <a href="{% url 'dashboard' %}" class="btn-cyan">Back to Dashboard</a> {% endcomment %}
+                        </div>
+                    </form>
+                </div>
+
+                <div class="panel d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h4 class="h5 fw-semibold mb-1 accent-cyan">Next Scheduled Meal</h4>
+                        <p class="muted mb-1">Upcoming booking data is not configured yet.</p>
+                        <p class="accent-yellow fw-semibold mb-0">Check meal booking section</p>
+                    </div>
+                    <a href="{% url 'meal_booking' %}" class="btn-cyan">Edit Order</a>
+                </div>
+
+                <div class="panel">
+                    <h4 class="h5 fw-semibold mb-4 accent-cyan">Recent Cafeteria Orders</h4>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tx in recent_transactions %}
+                                <tr>
+                                    <td>{{ tx.timestamp|date:"d M y" }}</td>
+                                    <td>{{ tx.description }}</td>
+                                    <td>BDT {{ tx.amount }}</td>
+                                    <td>
+                                        {% if tx.tx_type == "Credit" %}
+                                            <span class="accent-cyan">Completed</span>
+                                        {% else %}
+                                            <span class="accent-yellow">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="btn-cyan">View</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="muted">No recent records found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>
+
+<script>
+    (function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("password_updated") === "1") {
+            alert("Password updated successfully");
+        }
+
+        const imageForm = document.getElementById("profileImageForm");
+        const uploadInput = document.getElementById("profileUpload");
+        const preview = document.getElementById("profilePreview");
+        const fallback = document.getElementById("defaultAvatar");
+
+        function showPreview(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove("d-none");
+                fallback.classList.add("d-none");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (uploadInput) {
+            uploadInput.addEventListener("change", function (event) {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                showPreview(file);
+                if (imageForm) {
+                    imageForm.submit();
+                }
+            });
+        }
+    })();
+</script>
 {% endblock %}

@@ -24,33 +24,70 @@
         line-height: 1.6;
     }
 
-    /* --- NAVIGATION & HAMBURGER FIX --- */
+    /* --- NAVBAR: DARK/BLUE PROFESSIONAL STYLE --- */
     .navbar { 
-        background: rgba(22, 27, 34, 0.95); 
-        border-bottom: 1px solid rgba(0, 210, 255, 0.3); 
-        backdrop-filter: blur(12px); 
+        background: #111827;
+        border-bottom: 1px solid #1f2937;
+        box-shadow: 0 2px 12px rgba(2, 6, 23, 0.35);
         padding: 0.8rem 0;
     }
 
-    /* Custom Hamburger Icon - Blue & Visible */
+    .navbar-brand {
+        color: #f8fafc !important;
+        letter-spacing: 0.2px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        line-height: 1;
+    }
+
+    .navbar .navbar-brand {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .navbar-brand:hover {
+        color: #f8fafc !important;
+    }
+
+    .navbar-brand .brand-accent {
+        color: var(--accent-blue);
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+    }
+
+    .navbar-brand .brand-main {
+        color: #e2e8f0;
+        font-weight: 600;
+    }
+
     .navbar-toggler {
-        border: 1px solid var(--accent-blue) !important;
+        border: 1px solid #334155 !important;
     }
 
     .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 210, 255, 1)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E") !important;
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(203, 213, 225, 1)' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E") !important;
     }
 
     .nav-link { 
-        color: var(--text-main) !important; 
+        color: #cbd5e1 !important;
         font-weight: 500; 
         margin: 0 5px;
         position: relative;
         background: transparent !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.4rem;
         transition: color 0.3s ease;
     }
 
-    .nav-link:hover { color: var(--accent-blue) !important; }
+    .nav-link:hover,
+    .nav-link:focus {
+        color: var(--accent-blue) !important;
+        background: rgba(0, 210, 255, 0.08) !important;
+    }
 
     /* --- SYSTEM STATUS PULSE --- */
     .status-indicator {
@@ -80,19 +117,75 @@
     }
 
     /* --- BUTTONS --- */
-    .btn-neon { 
-        border: 1px solid var(--accent-blue); 
-        color: var(--accent-blue) !important; 
+    .navbar .btn-neon { 
+        border: 1px solid #0ea5e9;
+        color: #38bdf8 !important;
         background: transparent;
         border-radius: 8px;
         padding: 8px 20px;
-        transition: all 0.4s ease;
+        transition: all 0.25s ease;
     }
 
-    .btn-neon:hover { 
-        background: var(--accent-blue); 
-        color: #000 !important; 
-        box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+    .navbar .btn-neon:hover,
+    .navbar .btn-neon:focus { 
+        background: #0ea5e9;
+        color: #0b1120 !important;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+    }
+
+    /* --- FOOTER --- */
+    .site-footer {
+        background: #081a2f;
+        border-top: 1px solid #1f2937;
+        margin-top: 4rem;
+    }
+
+    .site-footer .footer-heading {
+        color: #22d3ee;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .site-footer .footer-text {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+    .site-footer .footer-link {
+        color: #94a3b8 !important;
+        text-decoration: none;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .site-footer .footer-link:hover {
+        color: #22d3ee !important;
+    }
+
+    .site-footer .social-icon {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #374151;
+        border-radius: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #e2e8f0 !important;
+        background: #0f172a !important;
+        text-decoration: none;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .site-footer .social-icon:hover {
+        background: #22d3ee !important;
+        color: #020617 !important;
+        border-color: #22d3ee;
     }
 
     input[type="date"] {
@@ -110,7 +203,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="{% url 'index' %}">
-            <span style="color: var(--accent-blue);">CAMPUS</span> Portal
+            <span class="brand-accent">Campus</span>
+            <span class="brand-main">Portal</span>
         </a>
         
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -121,6 +215,9 @@
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'cafeteria_main' %}"><i class="bi bi-egg-fried me-1"></i> Cafeteria</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'events' %}"><i class="bi bi-egg-fried me-1"></i> Event</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -157,6 +254,61 @@
         
         {% block content %}{% endblock %}
     </div>
+
+    {% if user.is_authenticated %}
+    <footer class="site-footer">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <h2 class="h4 fw-bold mb-3">
+                        <span style="color: #22d3ee;">CAMPUS</span>
+                        <span style="color: #e2e8f0;">Portal</span>
+                    </h2>
+                    <p class="footer-text mb-0">
+                        A centralized university management platform for students to manage events, profiles, and campus services efficiently.
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <h3 class="footer-heading h6">Quick Links</h3>
+                    <ul class="list-unstyled footer-text mb-0 d-grid gap-2">
+                        <li><a class="footer-link" href="{% url 'index' %}">Home</a></li>
+                        <li><a class="footer-link" href="{% url 'events' %}">Events</a></li>
+                        <li><a class="footer-link" href="{% url 'profile_update' %}">Profile</a></li>
+                        <li><a class="footer-link" href="{% url 'login' %}">Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <h3 class="footer-heading h6">Support</h3>
+                    <ul class="list-unstyled footer-text mb-0 d-grid gap-2">
+                        <li><a class="footer-link" href="#">Help Center</a></li>
+                        <li><a class="footer-link" href="#">Privacy Policy</a></li>
+                        <li><a class="footer-link" href="#">Terms & Conditions</a></li>
+                        <li><a class="footer-link" href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <h3 class="footer-heading h6">Contact</h3>
+                    <ul class="list-unstyled footer-text mb-3 d-grid gap-2">
+                        <li>Email: support@campus.edu</li>
+                        <li>Phone: +880 1XXXXXXXXX</li>
+                        <li>Location: University Campus</li>
+                    </ul>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-icon" aria-label="Facebook">F</a>
+                        <a href="#" class="social-icon" aria-label="Twitter">T</a>
+                        <a href="#" class="social-icon" aria-label="Instagram">I</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-top border-secondary py-3 text-center footer-text">
+            © 2026 Campus Portal. All rights reserved.
+        </div>
+    </footer>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

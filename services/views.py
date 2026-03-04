@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib import messages
 from django.http import JsonResponse, FileResponse
 from collections import OrderedDict
@@ -34,6 +34,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
+from django.urls import reverse
 import uuid
 from decimal import Decimal
 from .utils import send_wallet_sms
@@ -481,15 +482,114 @@ def profile_update(request):
     """Allows students to update their contact info for SMS alerts."""
     # Ensure a profile exists for the user
     profile, created = Profile.objects.get_or_create(user=request.user)
+    wallet = getattr(request.user, "studentwallet", None)
+    recent_transactions = (
+        wallet.transactions.all().order_by("-timestamp")[:5] if wallet else []
+    )
+    display_name = (
+        f"{request.user.first_name} {request.user.last_name}".strip()
+        or request.user.username
+    )
+    initials_source = display_name.split()
+    initials = "".join(part[0] for part in initials_source[:2]).upper() or "ST"
+    password_form = PasswordChangeForm(request.user)
 
     if request.method == "POST":
-        phone = request.POST.get("phone_number")
-        profile.phone_number = phone
-        profile.save()
-        return redirect("dashboard")
+        form_type = request.POST.get("form_type")
+        password_keys = {"old_password", "new_password1", "new_password2"}
+
+        # Fallback detection in case hidden form_type is not posted by the client.
+        if password_keys.issubset(request.POST.keys()):
+            form_type = "security_update"
+        elif request.FILES.get("profile_image") and not form_type:
+            form_type = "image_upload"
+        elif any(
+            key in request.POST
+            for key in ["email", "phone_number", "date_of_birth", "blood_group"]
+        ) and not form_type:
+            form_type = "personal_info"
+
+        if form_type == "security_update":
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully.")
+                return redirect(f"{reverse('profile_update')}?password_updated=1")
+            messages.error(request, "Please fix the password form errors.")
+            return render(
+                request,
+                "profile_update.html",
+                {
+                    "profile": profile,
+                    "wallet": wallet,
+                    "recent_transactions": recent_transactions,
+                    "display_name": display_name,
+                    "initials": initials,
+                    "password_form": password_form,
+                },
+            )
+
+        if form_type in {"personal_info", "image_upload"}:
+            user_needs_save = False
+            profile_needs_save = False
+
+            if form_type == "personal_info":
+                email = (request.POST.get("email") or "").strip()
+                if request.user.email != email:
+                    request.user.email = email
+                    user_needs_save = True
+
+                phone = (request.POST.get("phone_number") or "").strip()
+                if profile.phone_number != phone:
+                    profile.phone_number = phone
+                    profile_needs_save = True
+
+                dob = (request.POST.get("date_of_birth") or "").strip()
+                parsed_dob = None
+                if dob:
+                    try:
+                        parsed_dob = datetime.strptime(dob, "%Y-%m-%d").date()
+                    except ValueError:
+                        messages.error(request, "Invalid date format for Date of Birth.")
+                        return redirect("profile_update")
+                if profile.date_of_birth != parsed_dob:
+                    profile.date_of_birth = parsed_dob
+                    profile_needs_save = True
+
+                blood_group = (request.POST.get("blood_group") or "").strip().upper()
+                if profile.blood_group != blood_group:
+                    profile.blood_group = blood_group
+                    profile_needs_save = True
+
+            if request.FILES.get("profile_image"):
+                profile.profile_image = request.FILES["profile_image"]
+                profile_needs_save = True
+
+            if user_needs_save:
+                request.user.save(update_fields=["email"])
+            if profile_needs_save:
+                profile.save()
+
+            messages.success(request, "Profile updated successfully.")
+            return redirect("profile_update")
+
+        messages.error(request, "Invalid update request. Please try again.")
+        return redirect("profile_update")
 
     # Updated path to match your actual structure
-    return render(request, "profile_update.html", {"profile": profile})
+    return render(
+        request,
+        "profile_update.html",
+        {
+            "profile": profile,
+            "wallet": wallet,
+            "recent_transactions": recent_transactions,
+            "display_name": display_name,
+            "initials": initials,
+            "password_form": password_form,
+        },
+    )
 
 
 @login_required
